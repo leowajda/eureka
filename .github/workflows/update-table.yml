@@ -1,0 +1,78 @@
+on:
+  workflow_call:
+    inputs:
+      path-filter:
+        description: 'path containing the source code.'
+        required: true
+        type: string
+      file-ignore:
+        description: 'files to be ignored.'
+        default: ''
+        required: false
+        type: string
+      eureka-ref:
+        description: 'eureka branch to checkout'
+        default: 'master'
+        required: false
+        type: string
+
+jobs:
+  update-table:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout eureka
+        id: checkout_eureka
+        uses: actions/checkout@v4
+        with:
+          repository: leowajda/eureka
+          submodules: false
+          ref: ${{ inputs.eureka-ref }}
+
+      - name: checkout caller
+        id: checkout_caller
+        uses: actions/checkout@v4
+        with:
+          path: source-code
+          fetch-depth: 0
+
+      - name: setup python
+        id: setup_python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: install pip dependencies
+        id: install_dependencies
+        run: pip install -r requirements.txt
+
+      - name: retrieve changed files
+        uses: tj-actions/changed-files@v44
+        id: changed_files
+        with:
+          since_last_remote_commit: true
+          files_ignore: ${{ inputs.file-ignore }}
+          files: ${{ inputs.path-filter }}
+          path: source-code
+          separator: " "
+
+      - name: run script
+        id: run_script
+        env:
+          repository: ${{ github.repository }}
+          server_url: ${{ github.server_url }}
+          added_files: ${{ steps.changed_files.outputs.added_files }}
+          changed_files: ${{ steps.changed_files.outputs.modified_files }}
+          removed_files: ${{ steps.changed_files.outputs.deleted_files }}
+          readme: README.md
+          dataframe: content/data.csv
+          header: content/text.md
+        run: cd source-code && python ../.github/workflows/scripts/update_table.py
+
+      - name: auto-commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        id: auto_commit
+        with:
+          commit_message: ${{ steps.run_script.outputs.commit_msg }}
+          repository: source-code

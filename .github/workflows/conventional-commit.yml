@@ -1,0 +1,24 @@
+on:
+  workflow_call:
+    inputs:
+      checkout-depth:
+        description: 'depth for checkout'
+        default: 0
+        required: false
+        type: number
+
+jobs:
+  cog_check_job:
+    runs-on: ubuntu-latest
+    name: check conventional commit compliance
+    steps:
+
+      - uses: actions/checkout@v4
+        id: checkout_caller
+        with:
+          fetch-depth: ${{ inputs.checkout-depth }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: conventional commit check
+        id: commit_check
+        uses: cocogitto/cocogitto-action@v3

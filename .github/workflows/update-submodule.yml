@@ -1,0 +1,40 @@
+name: update submodules
+run-name: update submodules
+
+on:
+  schedule:
+    - cron:  '*/15 * * * *'
+
+jobs:
+  updater:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup python
+        id: setup_python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: update submodules
+        id: update_submodules
+        run: git submodule update --remote
+
+      - name: run script
+        id: run_script
+        env:
+          server_url: ${{ github.server_url }}
+          actor: ${{ github.actor }}
+        run: python .github/workflows/scripts/update_submodules.py
+
+      - name: auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        id: auto_commit
+        with:
+          commit_message: ${{ steps.run_script.outputs.commit_msg }}
