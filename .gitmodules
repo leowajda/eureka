@@ -1,0 +1,3 @@
+[submodule "eureka-java"]
+	path = eureka-java
+	url = https://github.com/leowajda/eureka-java.git
