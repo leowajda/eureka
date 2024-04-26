@@ -1,0 +1,3 @@
+|                       Name                       | Java                                                                                                                |
+|:------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------|
+| [Two Sum](https://leetcode.com/problems/two-sum) | [:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/TwoSum.java) |
