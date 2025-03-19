@@ -8,6 +8,7 @@ public class BinarySearch {
         int rightPtr = nums.length - 1;
 
         while (leftPtr <= rightPtr) {
+
             int midPtr = leftPtr + (rightPtr - leftPtr) / 2;
 
             if (nums[midPtr] == target)
