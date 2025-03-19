@@ -4,9 +4,9 @@ public class FindSmallestLetterGreaterThanTarget {
 
     public char nextGreatestLetter(char[] letters, char target) {
 
-        char nextGreatestLetter = letters[0];
-        int rightPtr = letters.length - 1;
         int leftPtr = 0;
+        int rightPtr = letters.length - 1;
+        char nextGreatestLetter = letters[0];
 
         while (leftPtr <= rightPtr) {
 
