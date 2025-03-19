@@ -5,6 +5,7 @@ public class FindFirstAndLastPositionOfElementInSortedArray {
     public int[] searchRange(int[] nums, int target) {
         int firstPosition = firstPosition(nums, target);
         int lastPosition  = lastPosition(nums, target);
+
         return new int[] { firstPosition, lastPosition };
     }
 
