@@ -48,7 +48,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: retrieve changed files
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v46
         id: changed_files
         with:
           since: date -d '10 days ago' -I
