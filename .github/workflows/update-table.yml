@@ -49,7 +49,7 @@ jobs:
 
       - name: find date offset
         id: date_offset
-        run: echo "date_offset=$(date -d '10 days ago' -I)" >> "$GITHUB_OUTPUT"
+        run: echo "date_offset=$(date -d '1 days ago' -I)" >> "$GITHUB_OUTPUT"
 
       - name: retrieve changed files
         uses: tj-actions/changed-files@v46
