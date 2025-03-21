@@ -49,13 +49,13 @@ jobs:
 
       - name: find date offset
         id: date_offset
-        run: date -d '10 days ago' -I
+        run: echo "date_offset=$(date -d '10 days ago' -I)" >> "$GITHUB_OUTPUT"
 
       - name: retrieve changed files
         uses: tj-actions/changed-files@v46
         id: changed_files
         with:
-          since: ${{ steps.date_offset }}
+          since: ${{ steps.date_offset.outputs.date_offset }}
           files_ignore: ${{ inputs.file-ignore }}
           files: ${{ inputs.path-filter }}
           path: source-code
