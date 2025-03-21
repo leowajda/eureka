@@ -51,7 +51,7 @@ jobs:
         uses: tj-actions/changed-files@v44
         id: changed_files
         with:
-          since_last_remote_commit: true
+          since: date -d '10 days ago' -I
           files_ignore: ${{ inputs.file-ignore }}
           files: ${{ inputs.path-filter }}
           path: source-code
