@@ -1,2 +1,5 @@
 Name,Java
+[Binary Search](https://leetcode.com/problems/binary-search),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/BinarySearch.java)
+[Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindMinimumInRotatedSortedArray.java)
+[Sqrt(x)](https://leetcode.com/problems/sqrtx),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/math/iterative/SqrtX.java)
 [Two Sum](https://leetcode.com/problems/two-sum),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/TwoSum.java)
