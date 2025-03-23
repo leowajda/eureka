@@ -1,5 +1,7 @@
 package linked_list.iterative;
 
+import linked_list.ListNode;
+
 public class MiddleOfTheLinkedList {
 
     public ListNode middleNode(ListNode head) {
