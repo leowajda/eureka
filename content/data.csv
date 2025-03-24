@@ -1,5 +1,9 @@
 Name,Java
 [Binary Search](https://leetcode.com/problems/binary-search),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/BinarySearch.java)
+[Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.java)
 [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindMinimumInRotatedSortedArray.java)
+[Find Smallest Letter Greater Than Target](https://leetcode.com/problems/find-smallest-letter-greater-than-target),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindSmallestLetterGreaterThanTarget.java)
+[Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/linked_list/iterative/MiddleOfTheLinkedList.java)
+[Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/PeakIndexInAMountainArray.java)
 [Sqrt(x)](https://leetcode.com/problems/sqrtx),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/math/iterative/SqrtX.java)
 [Two Sum](https://leetcode.com/problems/two-sum),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/TwoSum.java)
