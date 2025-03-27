@@ -58,6 +58,7 @@ jobs:
           since: ${{ steps.date_offset.outputs.date_offset }}
           files_ignore: ${{ inputs.file-ignore }}
           files: ${{ inputs.path-filter }}
+          fetch_depth: "50"
           path: source-code
           separator: " "
 
