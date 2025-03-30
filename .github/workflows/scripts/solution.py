@@ -15,7 +15,14 @@ METADATA = {
 
 class Solution:
     def __init__(self, file_path: str, action_type: Action, server_url: str, repo: str):
-        timestamp, commit, sha = Solution.find_metadata(file_path)
+        self.file_path = file_path
+        metadata = Solution.find_metadata(file_path)
+
+        if not metadata:
+            self.action = Action.UNDEFINED
+            return
+
+        timestamp, commit, sha = metadata
         self.problem_name, *_ = re.findall(QUOTATION_TEXT, commit)
         self.timestamp = int(timestamp)
         self.action = action_type
@@ -42,8 +49,4 @@ class Solution:
         return completed_process.stdout.splitlines()
 
     def __str__(self):
-        match self.action:
-            case Action.UNDEFINED:
-                return f"{self.action}"
-            case _:
-                return f"solution: {self.action} github_url: {self.github_url} host_url: {self.host_url}"
+        return " ".join(f"{key}: {value}" for key, value in vars(self).items())
