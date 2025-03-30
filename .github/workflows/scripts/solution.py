@@ -52,3 +52,8 @@ class Solution:
 
     def __str__(self):
         return " ".join(f"{key}: {value}" for key, value in vars(self).items())
+
+    def __eq__(self, other):
+        if isinstance(other, Solution):
+            return str(self) == str(other)
+        return False
