@@ -1,5 +1,4 @@
 import os
-import sys
 from action import Action
 from solution import Solution
 import pandas as pd
@@ -24,13 +23,22 @@ df = df.assign(lang_col=df[lang_col].str.split(' '))
 df = df.explode(lang_col)
 mod_df = df
 
-for solution in solutions:
+for idx, solution in enumerate(solutions):
     match solution.action:
         case Action.UNDEFINED:
-            print("couldn't resolve commit metadata, aborting...")
-            sys.exit(1)
-        case Action.ADD | Action.UPDATE:
-            print(f"{'adding' if solution.action == Action.ADD else 'updating'} {solution}...")
+            print(f"couldn't resolve commit metadata, for {solution} skipping...")
+            solutions.pop(idx)
+        case Action.ADD:
+            prev_entry = mod_df[(mod_df[name_col] == solution.host_url) & (mod_df[lang_col] == solution.github_url)]
+            if prev_entry.empty:
+                print(f"adding ${solution} ...")
+                frame = pd.DataFrame([[solution.host_url, solution.github_url]], columns=[name_col, lang_col])
+                mod_df = pd.concat([frame, mod_df], ignore_index=True)
+            else:
+                print(f"${solution} is already present, skipping...")
+                solutions.pop(idx)
+        case Action.UPDATE:
+            print(f"updating {solution} ...")
             frame = pd.DataFrame([[solution.host_url, solution.github_url]], columns=[name_col, lang_col])
             mod_df = pd.concat([frame, mod_df], ignore_index=True)
         case Action.REMOVE:
