@@ -20,6 +20,8 @@ class Solution:
 
         if not metadata:
             self.action = Action.UNDEFINED
+            # dummy timestamp needed for sorting
+            self.timestamp = 1_000_000_000
             return
 
         timestamp, commit, sha = metadata
