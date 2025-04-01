@@ -23,7 +23,7 @@ df = df.assign(lang_col=df[lang_col].str.split(' '))
 df = df.explode(lang_col)
 mod_df = df
 
-for solution in solutions:
+for solution in solutions[:]:
     match solution.action:
         case Action.UNDEFINED:
             print(f"couldn't resolve commit metadata, for {solution} skipping...")
