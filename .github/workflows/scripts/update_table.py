@@ -24,7 +24,6 @@ df = df.explode(lang_col)
 mod_df = df
 
 for solution in solutions:
-    print(f"processing {solution}")
     match solution.action:
         case Action.UNDEFINED:
             print(f"couldn't resolve commit metadata, for {solution} skipping...")
@@ -52,6 +51,7 @@ mod_df[lang_col] = mod_df[lang_col].apply(' '.join)
 
 if not mod_df.equals(df):
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+        print(f'filtered solutions: \n{", ".join([str(solution) for solution in solutions])}')
         details = [f"{solution.problem_name}: {solution.sha}" for solution in solutions]
         commit_msg = f'ci(docs): update table with changes from {", ".join(details)}'
         print(f"commit_msg={commit_msg}", file=f)
