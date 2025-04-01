@@ -24,6 +24,7 @@ df = df.explode(lang_col)
 mod_df = df
 
 for solution in solutions:
+    print(f"processing {solution}")
     match solution.action:
         case Action.UNDEFINED:
             print(f"couldn't resolve commit metadata, for {solution} skipping...")
@@ -31,18 +32,18 @@ for solution in solutions:
         case Action.ADD:
             prev_entry = mod_df[(mod_df[name_col] == solution.host_url) & (mod_df[lang_col] == solution.github_url)]
             if prev_entry.empty:
-                print(f"adding ${solution} ...")
+                print(f"adding ${solution}")
                 frame = pd.DataFrame([[solution.host_url, solution.github_url]], columns=[name_col, lang_col])
                 mod_df = pd.concat([frame, mod_df], ignore_index=True)
             else:
                 print(f"${solution} is already present, skipping...")
                 solutions.remove(solution)
         case Action.UPDATE:
-            print(f"updating {solution} ...")
+            print(f"updating {solution}")
             frame = pd.DataFrame([[solution.host_url, solution.github_url]], columns=[name_col, lang_col])
             mod_df = pd.concat([frame, mod_df], ignore_index=True)
         case Action.REMOVE:
-            print(f"removing {solution}...")
+            print(f"removing {solution}")
             mod_df = mod_df[(mod_df[name_col] != solution.host_url) & (mod_df[lang_col] != solution.github_url)]
 
 mod_df = mod_df.groupby(by=name_col, as_index=False)
