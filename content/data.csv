@@ -33,6 +33,7 @@ Name,Java,Scala
 [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree),[:arrows_counterclockwise:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/SerializeAndDeserializeBinaryTree.java),
 [Sqrt(x)](https://leetcode.com/problems/sqrtx),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/math/iterative/SqrtX.java),
 [Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/SubarraySumEqualsK.java),
+[Subsets](https://leetcode.com/problems/subsets),[:arrows_counterclockwise:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/recursive/Subsets.java),
 [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree),[:arrows_counterclockwise:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/SubtreeOfAnotherTree.java),
 [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii---input-array-is-sorted),,[:arrows_counterclockwise:](https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala)
 [Two Sum](https://leetcode.com/problems/two-sum),[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/TwoSum.java),
