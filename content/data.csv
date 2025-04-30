@@ -29,6 +29,7 @@ Name,Scala,Java
 [Minimum Depth of Binary Tree](https://leetcode.com/problems/minimum-depth-of-binary-tree),,[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/iterative/MinimumDepthOfBinaryTree.java)
 [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring),,[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/MinimumWindowSubstring.java)
 [Move Zeroes](https://leetcode.com/problems/move-zeroes),[:arrows_counterclockwise:](https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/MoveZeroes.scala),
+[Number of Islands](https://leetcode.com/problems/number-of-islands),,[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/graph/iterative/NumberOfIslands.java)
 [Palindrome Partitioning](https://leetcode.com/problems/palindrome-partitioning),,[:arrows_counterclockwise:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/string/recursive/PalindromePartitioning.java)
 [Peak Index in a Mountain Array](https://leetcode.com/problems/peak-index-in-a-mountain-array),,[:arrow_right_hook:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/PeakIndexInAMountainArray.java)
 [Permutations](https://leetcode.com/problems/permutations),,[:arrows_counterclockwise:](https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/recursive/Permutations.java)
