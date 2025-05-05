@@ -9,7 +9,7 @@ public class WordLadder {
         wordList.add(beginWord);
         Map<String, List<String>> graph = getGraph(wordList);
         Queue<String> queue             = new ArrayDeque<>(List.of(beginWord));
-        Set<String> visited             = new HashSet<>(List.of(beginWord));
+        Set<String> visited             = new HashSet<>(queue);
 
         int ladderLength = 1;
         while (!queue.isEmpty()) {
