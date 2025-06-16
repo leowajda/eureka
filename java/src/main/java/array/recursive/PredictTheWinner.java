@@ -1,4 +1,4 @@
-package array.iterative;
+package array.recursive;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
