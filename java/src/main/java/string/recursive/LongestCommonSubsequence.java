@@ -1,4 +1,4 @@
-package array.recursive;
+package string.recursive;
 
 import java.util.Arrays;
 
