@@ -23,7 +23,7 @@ jobs:
 
       - name: checkout eureka
         id: checkout_eureka
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: leowajda/eureka
           submodules: false
@@ -31,7 +31,7 @@ jobs:
 
       - name: checkout caller
         id: checkout_caller
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: source-code
           fetch-depth: 0
