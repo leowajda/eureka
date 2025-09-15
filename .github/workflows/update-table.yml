@@ -52,7 +52,7 @@ jobs:
         run: echo "date_offset=$(date -d '7 days ago' -I)" >> "$GITHUB_OUTPUT"
 
       - name: retrieve changed files
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         id: changed_files
         with:
           since: ${{ steps.date_offset.outputs.date_offset }}
