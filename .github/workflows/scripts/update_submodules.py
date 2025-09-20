@@ -9,7 +9,7 @@ completed_process = subprocess.run(
     text=True, check=True, shell=True, stdout=subprocess.PIPE
 )
 
-details = {}
+details = []
 for metadata in completed_process.stdout.splitlines():
     if metadata.startswith('-') or metadata.startswith('U'):
         continue
@@ -18,9 +18,9 @@ for metadata in completed_process.stdout.splitlines():
     commit_sha = commit_sha.replace('+', '')
     language = submodule.replace(f"{SUBMODULE_PREFIX}-", "")
     url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
-    details[language] = url
+    details.append(url)
 
 with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
     noun = "submodule" if len(details) == 1 else "submodules"
-    commit_msg = f'ci(docs): update {", ".join(details.keys())} {noun} to {", ".join(details.values())}'
+    commit_msg = f'ci(docs): update lang {noun} to latest version\n' + "\n".join(details)
     print(f"commit_msg={commit_msg}", file=f)
