@@ -53,7 +53,8 @@ if not mod_df.equals(df):
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
         print(f'filtered solutions: \n{", ".join([str(solution) for solution in solutions])}')
         details = [f"{solution.problem_name}: {solution.sha}" for solution in solutions]
-        commit_msg = f'ci(docs): update table with changes from {", ".join(details)}'
+        noun = "change" if len(details) == 1 else "changes"
+        commit_msg = f'ci(docs): update table with latest {noun}\n' + "\n".join(details)
         print(f"commit_msg={commit_msg}", file=f)
 
     mod_df = mod_df.set_index(keys=[name_col]).sort_index()
