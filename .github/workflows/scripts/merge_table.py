@@ -42,10 +42,11 @@ if not mod_df.equals(cached_df):
         )
         commit_sha = completed_process.stdout.strip()
         url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
-        details.append(f"{col}: {url}")
+        details.append(url)
 
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-        commit_msg = f'ci(docs): update table with changes from {", ".join(details)}'
+        noun = "change" if len(details) == 1 else "changes"
+        commit_msg = f'ci(docs): update table with latest {noun}\n' + "\n".join(details)
         print(f"commit_msg={commit_msg}", file=f)
 
     with open(DATAFRAME, 'w') as f:
