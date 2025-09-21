@@ -13,10 +13,10 @@ public class DecodeWays {
             .collect(toCollection(HashSet::new));
 
     public int numDecodings(String s) {
-        return backtrack(s, 0, new Integer[s.length()]);
+        return dfs(s, 0, new Integer[s.length()]);
     }
 
-    private int backtrack(String s, int start, Integer[] memo) {
+    private int dfs(String s, int start, Integer[] memo) {
 
         if (start >= s.length())
             return 1;
@@ -28,14 +28,14 @@ public class DecodeWays {
 
         var firstDigit = String.valueOf(s.charAt(start));
         if (VALID_NUMBERS.contains(firstDigit))
-            ways += backtrack(s, start + 1, memo);
+            ways += dfs(s, start + 1, memo);
 
         if (start + 2 > s.length())
             return memo[start] = ways;
 
         var secondDigit = String.valueOf(s.charAt(start + 1));
         if (VALID_NUMBERS.contains(firstDigit + secondDigit))
-            ways += backtrack(s, start + 2, memo);
+            ways += dfs(s, start + 2, memo);
 
         return memo[start] = ways;
     }
