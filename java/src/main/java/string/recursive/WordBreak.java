@@ -7,10 +7,10 @@ import java.util.Set;
 public class WordBreak {
 
     public boolean wordBreak(String s, List<String> wordDict) {
-        return backtrack(s, 0, new HashSet<>(wordDict), new Boolean[s.length()]);
+        return dfs(s, 0, new HashSet<>(wordDict), new Boolean[s.length()]);
     }
 
-    private boolean backtrack(String s, int start, Set<String> wordDict, Boolean[] memo) {
+    private boolean dfs(String s, int start, Set<String> wordDict, Boolean[] memo) {
 
         if (start >= s.length())
             return true;
@@ -20,7 +20,7 @@ public class WordBreak {
 
         for (int end = start; end < s.length(); end++) {
             var word = s.substring(start, end + 1);
-            if (wordDict.contains(word) && backtrack(s, end + 1, wordDict, memo))
+            if (wordDict.contains(word) && dfs(s, end + 1, wordDict, memo))
                 return memo[start] = true;
         }
 
