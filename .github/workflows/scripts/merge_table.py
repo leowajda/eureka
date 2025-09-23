@@ -41,8 +41,7 @@ if not mod_df.equals(cached_df):
             text=True, check=True, shell=True, stdout=subprocess.PIPE
         )
         commit_sha = completed_process.stdout.strip()
-        url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
-        details.append(url)
+        details.append(commit_sha)
 
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
         noun = "change" if len(details) == 1 else "changes"

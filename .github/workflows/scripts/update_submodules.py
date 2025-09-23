@@ -16,9 +16,7 @@ for metadata in completed_process.stdout.splitlines():
 
     commit_sha, submodule = metadata.split()
     commit_sha = commit_sha.replace('+', '')
-    language = submodule.replace(f"{SUBMODULE_PREFIX}-", "")
-    url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
-    details.append(url)
+    details.append(commit_sha)
 
 with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
     noun = "submodule" if len(details) == 1 else "submodules"
