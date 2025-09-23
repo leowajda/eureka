@@ -23,4 +23,4 @@ for metadata in completed_process.stdout.splitlines():
 with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
     noun = "submodule" if len(details) == 1 else "submodules"
     commit_msg = f'ci(docs): update lang {noun} to latest version\n' + "\n".join(details)
-    print(f"commit_msg={commit_msg}", file=f)
+    print(f'commit_msg<<EOF\n{commit_msg}\nEOF', file=f)
