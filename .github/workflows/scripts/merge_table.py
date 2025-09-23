@@ -47,7 +47,7 @@ if not mod_df.equals(cached_df):
     with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
         noun = "change" if len(details) == 1 else "changes"
         commit_msg = f'ci(docs): update table with latest {noun}\n' + "\n".join(details)
-        print(f"commit_msg={commit_msg}", file=f)
+        print(f'commit_msg<<EOF\n{commit_msg}\nEOF', file=f)
 
     with open(DATAFRAME, 'w') as f:
         f.write(mod_df.to_csv())
