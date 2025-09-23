@@ -55,7 +55,7 @@ if not mod_df.equals(df):
         details = [f"{solution.problem_name}: {solution.sha}" for solution in solutions]
         noun = "change" if len(details) == 1 else "changes"
         commit_msg = f'ci(docs): update table with latest {noun}\n' + "\n".join(details)
-        print(f"commit_msg={commit_msg}", file=f)
+        print(f'commit_msg<<EOF\n{commit_msg}\nEOF', file=f)
 
     mod_df = mod_df.set_index(keys=[name_col]).sort_index()
     with open(DATAFRAME, 'w') as f:
