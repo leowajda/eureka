@@ -21,4 +21,4 @@ jobs:
 
       - name: conventional commit check
         id: commit_check
-        uses: cocogitto/cocogitto-action@v3
+        uses: cocogitto/cocogitto-action@v4
