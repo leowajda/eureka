@@ -13,7 +13,7 @@ jobs:
     name: check conventional commit compliance
     steps:
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         id: checkout_caller
         with:
           fetch-depth: ${{ inputs.checkout-depth }}
