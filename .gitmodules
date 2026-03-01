@@ -4,3 +4,6 @@
 [submodule "eureka-scala"]
 	path = eureka-scala
 	url = https://github.com/leowajda/eureka-scala
+[submodule "eureka-python"]
+	path = eureka-python
+	url = https://github.com/leowajda/eureka-python
