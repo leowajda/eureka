@@ -11,7 +11,7 @@ completed_process = subprocess.run(
 
 details = []
 for metadata in completed_process.stdout.splitlines():
-    if metadata.startswith('-') or metadata.startswith('U'):
+    if not metadata.startswith('+'):
         continue
 
     commit_sha, submodule = metadata.split()
@@ -19,6 +19,9 @@ for metadata in completed_process.stdout.splitlines():
     language = submodule.replace(f"{SUBMODULE_PREFIX}-", "")
     url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
     details.append(url)
+
+if not details:
+    raise SystemExit(0)
 
 with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
     noun = "submodule" if len(details) == 1 else "submodules"
