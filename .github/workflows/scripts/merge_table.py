@@ -19,7 +19,7 @@ mod_df = reduce(
 )
 
 mod_df = mod_df.set_index(INDEX).fillna('').sort_index()
-cached_df = pd.read_csv(DATAFRAME, index_col=INDEX)
+cached_df = pd.read_csv(DATAFRAME, index_col=INDEX).fillna('')
 
 if not mod_df.equals(cached_df):
 
