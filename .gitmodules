@@ -7,3 +7,6 @@
 [submodule "eureka-python"]
 	path = eureka-python
 	url = https://github.com/leowajda/eureka-python
+[submodule "eureka-cpp"]
+	path = eureka-cpp
+	url = https://github.com/leowajda/eureka-cpp
