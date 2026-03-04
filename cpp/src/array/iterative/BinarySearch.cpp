@@ -1,24 +1,10 @@
+#include <algorithm>
 #include <vector>
 
 class BinarySearch {
  public:
-  int search(const std::vector<int>& nums, int target) const noexcept {
-    if (nums.empty())
-      return -1;
-
-    int left = 0, right = nums.size() - 1;
-    while (left <= right) {
-      const int middle = left + (right - left) / 2;
-      const int mid_val = nums[middle];
-
-      if (mid_val == target)
-        return middle;
-      if (mid_val < target)
-        left = middle + 1;
-      else
-        right = middle - 1;
-    }
-
-    return -1;
+  constexpr int search(const std::vector<int>& nums, const int target) const noexcept {
+    const auto it = std::ranges::lower_bound(nums, target);
+    return it != nums.cend() && *it == target ? static_cast<int>(it - nums.cbegin()) : -1;
   }
 };
