@@ -117,13 +117,20 @@ for solution in all_solutions:
                 print(f"{solution} is already present, skipping...")
 
         case Action.UPDATE:
-            print(f"updating {solution}")
-            frame = pd.DataFrame(
-                [[solution.host_url, solution.github_url]],
-                columns=[name_col, lang_col],
-            )
-            mod_df = pd.concat([frame, mod_df], ignore_index=True)
-            active_solutions.append(solution)
+            prev_entry = mod_df[
+                (mod_df[name_col] == solution.host_url)
+                & (mod_df[lang_col] == solution.github_url)
+            ]
+            if prev_entry.empty:
+                print(f"updating {solution}")
+                frame = pd.DataFrame(
+                    [[solution.host_url, solution.github_url]],
+                    columns=[name_col, lang_col],
+                )
+                mod_df = pd.concat([frame, mod_df], ignore_index=True)
+                active_solutions.append(solution)
+            else:
+                print(f"{solution} is already present, skipping...")
 
         case Action.REMOVE:
             print(f"removing {solution}")
