@@ -7,9 +7,13 @@ on:
         type: string
       eureka-ref:
         description: 'eureka branch to checkout'
-        default: 'master'
+        default: 'feature/yaml-migration'
         required: false
         type: string
+    secrets:
+      LEETCODE_SESSION:
+        description: 'LeetCode session cookie for metadata fetching'
+        required: false
 
 jobs:
   replay-table:
@@ -54,8 +58,9 @@ jobs:
           changed_files: ""
           removed_files: ""
           readme: README.md
-          dataframe: content/data.csv
-          header: content/text.md
+          yaml_file: _data/problems.yml
+          header: _data/text.md
+          LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
         run: cd source-code && python ../.github/workflows/scripts/update_table.py
 
       - name: auto-commit changes
