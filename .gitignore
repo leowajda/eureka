@@ -256,3 +256,6 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+# Local development scripts (not tracked)
+src/dojo/
