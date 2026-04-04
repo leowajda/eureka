@@ -56,9 +56,7 @@ class Solution:
         # Strip illegal characters first (spaces survive), then convert spaces
         # to hyphens so multi-word names become valid URL path segments.
         dashed_name = (
-            re.sub(ILLEGAL_SYMBOLS, "", self.problem_name)
-            .replace(" ", "-")
-            .lower()
+            re.sub(ILLEGAL_SYMBOLS, "", self.problem_name).replace(" ", "-").lower()
         )
         commit_metadata = re.sub(QUOTATION_TEXT, "", commit).lower()
         emoji = (
@@ -74,6 +72,48 @@ class Solution:
 
         self.github_url = f"[:{emoji}:]({server_url}/{repo}/blob/master/{file_path})"
         self.host_url = f"[{self.problem_name}](https://{host}/{dashed_name})"
+
+        self.slug: str = dashed_name
+        self.approach: str = (
+            "recursive" if "recursive" in commit_metadata else "iterative"
+        )
+        self.lang: str = (
+            repo.split("/")[-1].replace("eureka-", "") if "/" in repo else ""
+        )
+        self.emoji: str = emoji
+        self.difficulty: str = ""
+        self.categories: list[str] = []
+        self._fetch_metadata()
+
+    def _fetch_metadata(self) -> None:
+        import os
+        import requests
+
+        session = os.getenv("LEETCODE_SESSION")
+        if not session or not self.slug:
+            return
+
+        try:
+            url = "https://leetcode.com/graphql"
+            headers = {
+                "Content-Type": "application/json",
+                "Cookie": f"LEETCODE_SESSION={session}",
+            }
+            query = {
+                "query": "query questionData($titleSlug: String!) { question(titleSlug: $titleSlug) { difficulty topicTags { name } } }",
+                "variables": {"titleSlug": self.slug},
+            }
+
+            response = requests.post(url, json=query, headers=headers, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+
+            if "errors" not in data:
+                question = data.get("data", {}).get("question", {})
+                self.difficulty = question.get("difficulty", "")
+                self.categories = [tag["name"] for tag in question.get("topicTags", [])]
+        except Exception:
+            pass
 
     @staticmethod
     def find_metadata(path: str) -> tuple[str, str, str] | None:
