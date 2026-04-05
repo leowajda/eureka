@@ -19,6 +19,8 @@ problems:
       iterative: https://github.com/leowajda/eureka-python/blob/master/src/array/iterative/BinarySearch.py
     scala:
       recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/BinarySearch.scala
+    cpp:
+      iterative: https://github.com/leowajda/eureka-cpp/blob/master/src/array/iterative/BinarySearch.cpp
   binary-tree-level-order-traversal:
     name: Binary Tree Level Order Traversal
     url: https://leetcode.com/problems/binary-tree-level-order-traversal
@@ -87,7 +89,8 @@ problems:
     name: Course Schedule
     url: https://leetcode.com/problems/course-schedule
     difficulty: Medium
-    categories: [Depth-First Search, Breadth-First Search, Graph Theory, Topological Sort]
+    categories: [Depth-First Search, Breadth-First Search, Graph Theory, Topological
+        Sort]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/graph/iterative/CourseSchedule.java
   decode-ways:
@@ -125,6 +128,8 @@ problems:
     categories: [Array, Binary Search]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.java
+    cpp:
+      iterative: https://github.com/leowajda/eureka-cpp/blob/master/src/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.cpp
   find-if-path-exists-in-graph:
     name: Find if Path Exists in Graph
     url: https://leetcode.com/problems/find-if-path-exists-in-graph
@@ -153,6 +158,8 @@ problems:
     categories: [Array, Binary Search]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/FindSmallestLetterGreaterThanTarget.java
+    cpp:
+      iterative: https://github.com/leowajda/eureka-cpp/blob/master/src/array/iterative/FindSmallestLetterGreaterThanTarget.cpp
   flood-fill:
     name: Flood Fill
     url: https://leetcode.com/problems/flood-fill
@@ -192,7 +199,8 @@ problems:
     name: K Closest Points to Origin
     url: https://leetcode.com/problems/k-closest-points-to-origin
     difficulty: Medium
-    categories: [Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority Queue), Quickselect]
+    categories: [Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority
+        Queue), Quickselect]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/KClosestPointsToOrigin.java
   kth-largest-element-in-an-array:
@@ -417,14 +425,16 @@ problems:
     name: Serialize and Deserialize Binary Tree
     url: https://leetcode.com/problems/serialize-and-deserialize-binary-tree
     difficulty: Hard
-    categories: [String, Tree, Depth-First Search, Breadth-First Search, Design, Binary Tree]
+    categories: [String, Tree, Depth-First Search, Breadth-First Search, Design, Binary
+        Tree]
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/SerializeAndDeserializeBinaryTree.java
   sliding-puzzle:
     name: Sliding Puzzle
     url: https://leetcode.com/problems/sliding-puzzle
     difficulty: Hard
-    categories: [Array, Dynamic Programming, Backtracking, Breadth-First Search, Memoization, Matrix]
+    categories: [Array, Dynamic Programming, Backtracking, Breadth-First Search, Memoization,
+      Matrix]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/graph/iterative/SlidingPuzzle.java
   sqrtx:
@@ -434,6 +444,8 @@ problems:
     categories: [Math, Binary Search]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/math/iterative/SqrtX.java
+    cpp:
+      iterative: https://github.com/leowajda/eureka-cpp/blob/master/src/math/iterative/Sqrtx.cpp
   subarray-sum-equals-k:
     name: Subarray Sum Equals K
     url: https://leetcode.com/problems/subarray-sum-equals-k
