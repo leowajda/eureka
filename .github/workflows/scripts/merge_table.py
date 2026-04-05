@@ -3,7 +3,6 @@ import shlex
 import subprocess
 from pathlib import Path
 
-import pandas as pd
 import yaml
 
 
@@ -16,9 +15,7 @@ def _require_env(name: str) -> str:
     return value
 
 
-README: Path = Path(_require_env("readme"))
 YAML_FILE: Path = Path(_require_env("yaml_file"))
-HEADER: Path = Path(_require_env("header"))
 ACTOR = _require_env("actor")
 SERVER_URL = _require_env("server_url")
 GITHUB_OUTPUT: Path = Path(_require_env("GITHUB_OUTPUT"))
@@ -28,13 +25,15 @@ REPO_ROOT: Path = Path(".")
 
 
 def load_yaml(path: Path) -> dict:
+    print(f"Loading YAML from: {path}")
     if not path.exists():
-        return {"problems": {}}
+        raise RuntimeError(f"Required YAML file '{path}' does not exist.")
     with open(path) as f:
         data = yaml.safe_load(f) or {}
         return data.get("problems", {})
 
 
+print(f"Loading eureka problems from: {YAML_FILE}")
 eureka_problems: dict = load_yaml(YAML_FILE)
 original_problems: dict = dict(eureka_problems)
 
@@ -42,16 +41,23 @@ sub_directories: list[Path] = [
     f for f in REPO_ROOT.iterdir() if f.is_dir() and SUBMODULE_PREFIX in f.name
 ]
 
+print(f"Found {len(sub_directories)} submodules to process")
+
 for directory in sub_directories:
     submodule_yaml: Path = directory / "_data" / "problems.yml"
+    print(f"Checking submodule: {directory.name} -> {submodule_yaml}")
     if not submodule_yaml.exists():
+        print(f"  Skipping {directory.name}: no _data/problems.yml found")
         continue
 
+    print(f"  Loading YAML from {submodule_yaml}")
     submodule_problems: dict = load_yaml(submodule_yaml)
     lang: str = directory.name.replace("eureka-", "")
+    print(f"  Processing {len(submodule_problems)} problems for language: {lang}")
 
     for slug, problem_data in submodule_problems.items():
         if slug not in eureka_problems:
+            print(f"    Adding new problem: {slug}")
             eureka_problems[slug] = {
                 "name": problem_data.get("name", ""),
                 "url": problem_data.get("url", ""),
@@ -66,43 +72,10 @@ for directory in sub_directories:
         }
 
 if eureka_problems == original_problems:
+    print("No changes detected in problems, exiting.")
     raise SystemExit(0)
 
-all_langs: set[str] = set()
-for problem in eureka_problems.values():
-    all_langs.update(
-        k
-        for k in problem.keys()
-        if k not in ["name", "url", "difficulty", "categories"]
-    )
-langs: list[str] = sorted(all_langs)
-
-table_data: list[dict] = []
-for slug in sorted(eureka_problems.keys()):
-    problem = eureka_problems[slug]
-    row: dict = {"Problem": f"[{problem.get('name', '')}]({problem.get('url', '')})"}
-    for lang in langs:
-        if lang in problem:
-            solutions: list[str] = []
-            for approach, url in problem[lang].items():
-                emoji: str = (
-                    "arrows_counterclockwise"
-                    if approach == "recursive"
-                    else "arrow_right_hook"
-                )
-                solutions.append(f"[:{emoji}:]({url})")
-            row[lang] = " ".join(solutions)
-        else:
-            row[lang] = ""
-    table_data.append(row)
-
-df: pd.DataFrame = pd.DataFrame(table_data)
-
-header_content: str = HEADER.read_text()
-new_readme: str = header_content + "\n\n## Problems\n\n" + df.to_markdown(index=False)
-
-if README.exists() and README.read_text() == new_readme:
-    raise SystemExit(0)
+print(f"Changes detected: {len(eureka_problems)} total problems")
 
 details: list[str] = []
 for directory in sub_directories:
@@ -127,6 +100,7 @@ commit_msg = f"ci(docs): update table with latest {noun}\n" + "\n".join(details)
 with GITHUB_OUTPUT.open("a") as f:
     print(f"commit_msg<<EOF\n{commit_msg}\nEOF", file=f)
 
+print(f"Writing merged YAML to: {YAML_FILE}")
 with YAML_FILE.open("w") as f:
     yaml.dump(
         {"problems": eureka_problems},
@@ -136,5 +110,4 @@ with YAML_FILE.open("w") as f:
         allow_unicode=True,
     )
 
-with README.open("w") as f:
-    f.write(new_readme)
+print("Merge completed successfully.")
