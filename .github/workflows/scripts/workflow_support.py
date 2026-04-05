@@ -79,6 +79,11 @@ def run_git(*args: str, cwd: Path | None = None) -> str:
     ).stdout.strip()
 
 
+def extract_submodule_sha(raw_status: str) -> str:
+    commit_sha, _ = raw_status.split(maxsplit=1)
+    return commit_sha.lstrip("+-U")
+
+
 def merge_problem(existing: dict[str, Any], incoming: dict[str, Any]) -> dict[str, Any]:
     merged = {**existing}
 
