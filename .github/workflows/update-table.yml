@@ -67,9 +67,7 @@ jobs:
           added_files: ${{ steps.changed_files.outputs.added_files }}
           changed_files: ${{ steps.changed_files.outputs.modified_files }}
           removed_files: ${{ steps.changed_files.outputs.deleted_files }}
-          readme: README.md
           yaml_file: _data/problems.yml
-          header: _data/text.md
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
         run: cd source-code && python ../.github/workflows/scripts/update_table.py
 

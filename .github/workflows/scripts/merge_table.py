@@ -1,131 +1,102 @@
-import os
-import shlex
-import subprocess
+from __future__ import annotations
+
 from pathlib import Path
 
-import yaml
+from workflow_support import (
+    PROBLEM_FIELDS,
+    ScriptContext,
+    dump_problems,
+    extract_submodule_sha,
+    load_problems,
+    merge_problem_entry,
+    require_env,
+    run_git,
+    write_output,
+)
+
+SUBMODULE_PREFIX = "eureka-"
 
 
-def _require_env(name: str) -> str:
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(
-            f"Required environment variable '{name}' is not set or empty."
-        )
-    return value
-
-
-YAML_FILE: Path = Path(_require_env("yaml_file"))
-ACTOR = _require_env("actor")
-SERVER_URL = _require_env("server_url")
-GITHUB_OUTPUT: Path = Path(_require_env("GITHUB_OUTPUT"))
-
-SUBMODULE_PREFIX = "eureka"
-REPO_ROOT: Path = Path(".")
-
-
-def load_yaml(path: Path) -> dict:
-    print(f"Loading YAML from: {path}")
-    if not path.exists():
-        raise RuntimeError(f"Required YAML file '{path}' does not exist.")
-    with open(path) as f:
-        data = yaml.safe_load(f) or {}
-        return data.get("problems", {})
-
-
-print(f"Loading eureka problems from: {YAML_FILE}")
-eureka_problems: dict = load_yaml(YAML_FILE)
-original_problems: dict = dict(eureka_problems)
-
-sub_directories: list[Path] = [
-    f for f in REPO_ROOT.iterdir() if f.is_dir() and SUBMODULE_PREFIX in f.name
-]
-
-print(f"Found {len(sub_directories)} submodules to process")
-
-for directory in sub_directories:
-    submodule_yaml: Path = directory / "_data" / "problems.yml"
-    print(f"Checking submodule: {directory.name} -> {submodule_yaml}")
-    if not submodule_yaml.exists():
-        print(f"  Skipping {directory.name}: no _data/problems.yml found")
-        continue
-
-    print(f"  Loading YAML from {submodule_yaml}")
-    submodule_problems: dict = load_yaml(submodule_yaml)
-    lang: str = directory.name.replace("eureka-", "")
-    print(f"  Processing {len(submodule_problems)} problems for language: {lang}")
-
-    for slug, problem_data in submodule_problems.items():
-        if slug not in eureka_problems:
-            print(f"    Adding new problem: {slug}")
-            eureka_problems[slug] = {
-                "name": problem_data.get("name", ""),
-                "url": problem_data.get("url", ""),
-                "difficulty": problem_data.get("difficulty", ""),
-                "categories": problem_data.get("categories", []),
-            }
-
-        lang_data = {
-            k: v
-            for k, v in problem_data.items()
-            if k not in ["name", "url", "difficulty", "categories"]
-        }
-        if lang_data:
-            eureka_problems[slug][lang] = lang_data
-
-if eureka_problems == original_problems:
-    print("No changes detected in problems, exiting.")
-    raise SystemExit(0)
-
-print(f"Changes detected: {len(eureka_problems)} total problems")
-
-details: list[str] = []
-for directory in sub_directories:
-    result = subprocess.run(
-        args=(
-            f"git submodule status {shlex.quote(directory.name)}"
-            f" | awk '{{print $1}}'"
-            f" | sed 's/^[-+]//'"
-        ),
-        text=True,
-        check=True,
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+def iter_submodule_directories(root: Path) -> list[Path]:
+    return sorted(
+        [
+            entry
+            for entry in root.iterdir()
+            if entry.is_dir() and entry.name.startswith(SUBMODULE_PREFIX)
+        ],
+        key=lambda entry: entry.name,
     )
-    commit_sha = result.stdout.strip()
-    details.append(f"{SERVER_URL}/{ACTOR}/{directory.name}/commit/{commit_sha}")
 
-noun = "change" if len(details) == 1 else "changes"
-commit_msg = f"ci(docs): update table with latest {noun}\n" + "\n".join(details)
 
-with GITHUB_OUTPUT.open("a") as f:
-    print(f"commit_msg<<EOF\n{commit_msg}\nEOF", file=f)
+def merge_submodule_problems(root: Path, problems: dict[str, dict]) -> dict[str, dict]:
+    merged = dict(problems)
 
-print(f"Writing merged YAML to: {YAML_FILE}")
-with YAML_FILE.open("w") as f:
-    f.write("problems:\n")
-    for slug in sorted(eureka_problems.keys()):
-        problem = eureka_problems[slug]
-        f.write(f"  {slug}:\n")
-        f.write(f"    name: {problem['name']}\n")
-        f.write(f"    url: {problem['url']}\n")
-        f.write(f"    difficulty: {problem['difficulty']}\n")
+    for directory in iter_submodule_directories(root):
+        submodule_yaml = directory / "_data" / "problems.yml"
+        if not submodule_yaml.exists():
+            continue
 
-        categories = problem.get("categories", [])
-        if categories:
-            f.write(f"    categories: [{', '.join(categories)}]\n")
+        language = directory.name.removeprefix(SUBMODULE_PREFIX)
+        submodule_problems = load_problems(submodule_yaml)
 
-        for lang in sorted(
-            [
-                k
-                for k in problem.keys()
-                if k not in ["name", "url", "difficulty", "categories"] and problem[k]
-            ]
-        ):
-            f.write(f"    {lang}:\n")
-            for approach in ["iterative", "recursive"]:
-                if approach in problem[lang]:
-                    f.write(f"      {approach}: {problem[lang][approach]}\n")
+        for slug, problem_data in submodule_problems.items():
+            existing = merged.get(slug, {})
+            incoming = {
+                field: problem_data.get(
+                    field,
+                    existing.get(field, [] if field == "categories" else ""),
+                )
+                for field in PROBLEM_FIELDS
+            }
+            implementations = {
+                key: value
+                for key, value in problem_data.items()
+                if key not in PROBLEM_FIELDS and value
+            }
+            if implementations:
+                incoming[language] = implementations
 
-print("Merge completed successfully.")
+            merged[slug] = merge_problem_entry(existing, incoming)
+
+    return merged
+
+
+def collect_submodule_details(root: Path, actor: str, server_url: str) -> list[str]:
+    details = []
+    for directory in iter_submodule_directories(root):
+        raw_status = run_git("submodule", "status", "--", directory.name, cwd=root)
+        if not raw_status:
+            continue
+        details.append(
+            f"{server_url}/{actor}/{directory.name}/commit/{extract_submodule_sha(raw_status)}"
+        )
+    return details
+
+
+def main() -> None:
+    root = Path(".")
+    context = ScriptContext(
+        yaml_file=Path(require_env("yaml_file")),
+        github_output=Path(require_env("GITHUB_OUTPUT")),
+    )
+    actor = require_env("actor")
+    server_url = require_env("server_url")
+
+    original_problems = load_problems(context.yaml_file)
+    merged_problems = merge_submodule_problems(root, original_problems)
+    if merged_problems == original_problems:
+        raise SystemExit(0)
+
+    dump_problems(context.yaml_file, merged_problems)
+
+    details = collect_submodule_details(root, actor, server_url)
+    noun = "change" if len(details) == 1 else "changes"
+    write_output(
+        context.github_output,
+        "commit_msg",
+        f"ci(docs): update table with latest {noun}\n" + "\n".join(details),
+    )
+
+
+if __name__ == "__main__":
+    main()

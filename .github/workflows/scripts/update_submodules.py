@@ -1,49 +1,40 @@
-import os
-import subprocess
+from __future__ import annotations
+
 from pathlib import Path
 
-
-def _require_env(name: str) -> str:
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"Required environment variable '{name}' is not set or empty.")
-    return value
-
-
-SERVER_URL = _require_env("server_url")
-ACTOR = _require_env("actor")
-GITHUB_OUTPUT: Path = Path(_require_env("GITHUB_OUTPUT"))
+from workflow_support import require_env, run_git, write_output
 
 SUBMODULE_PREFIX = "eureka"
 
-result = subprocess.run(
-    args="git submodule status | awk '{print $1, $2}'",
-    text=True,
-    check=True,
-    shell=True,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-)
 
-details: list[str] = []
-for line in result.stdout.splitlines():
-    if not line.startswith("+"):
-        continue
+def main() -> None:
+    server_url = require_env("server_url")
+    actor = require_env("actor")
+    github_output = Path(require_env("GITHUB_OUTPUT"))
 
-    commit_sha, submodule = line.split(maxsplit=1)
-    commit_sha = commit_sha.lstrip("+")
+    details: list[str] = []
+    for line in run_git("submodule", "status").splitlines():
+        if not line.startswith("+"):
+            continue
 
-    if not submodule.startswith(SUBMODULE_PREFIX):
-        continue
+        commit_sha, submodule = line.split(maxsplit=1)
+        if not submodule.startswith(SUBMODULE_PREFIX):
+            continue
 
-    url = f"{SERVER_URL}/{ACTOR}/{submodule}/commit/{commit_sha}"
-    details.append(url)
+        details.append(
+            f"{server_url}/{actor}/{submodule}/commit/{commit_sha.lstrip('+')}"
+        )
 
-if not details:
-    raise SystemExit(0)
+    if not details:
+        raise SystemExit(0)
 
-noun = "submodule" if len(details) == 1 else "submodules"
-commit_msg = f"ci(docs): update lang {noun} to latest version\n" + "\n".join(details)
+    noun = "submodule" if len(details) == 1 else "submodules"
+    write_output(
+        github_output,
+        "commit_msg",
+        f"ci(docs): update lang {noun} to latest version\n" + "\n".join(details),
+    )
 
-with GITHUB_OUTPUT.open("a") as f:
-    print(f"commit_msg<<EOF\n{commit_msg}\nEOF", file=f)
+
+if __name__ == "__main__":
+    main()
