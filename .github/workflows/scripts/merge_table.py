@@ -24,6 +24,25 @@ SUBMODULE_PREFIX = "eureka"
 REPO_ROOT: Path = Path(".")
 
 
+# Custom YAML dumper to control formatting
+class CustomDumper(yaml.SafeDumper):
+    pass
+
+
+def dict_representer(dumper, data):
+    # Use block style (expanded) for dictionaries
+    return dumper.represent_mapping("tag:yaml.org,2002:map", data.items())
+
+
+def list_representer(dumper, data):
+    # Use flow style (inline) for simple lists like categories
+    return dumper.represent_sequence("tag:yaml.org,2002:seq", data, flow_style=True)
+
+
+CustomDumper.add_representer(dict, dict_representer)
+CustomDumper.add_representer(list, list_representer)
+
+
 def load_yaml(path: Path) -> dict:
     print(f"Loading YAML from: {path}")
     if not path.exists():
@@ -105,7 +124,7 @@ with YAML_FILE.open("w") as f:
     yaml.dump(
         {"problems": eureka_problems},
         f,
-        default_flow_style=False,
+        Dumper=CustomDumper,
         sort_keys=False,
         allow_unicode=True,
     )
