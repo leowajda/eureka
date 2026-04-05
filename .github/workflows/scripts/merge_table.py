@@ -65,11 +65,13 @@ for directory in sub_directories:
                 "categories": problem_data.get("categories", []),
             }
 
-        eureka_problems[slug][lang] = {
+        lang_data = {
             k: v
             for k, v in problem_data.items()
             if k not in ["name", "url", "difficulty", "categories"]
         }
+        if lang_data:
+            eureka_problems[slug][lang] = lang_data
 
 if eureka_problems == original_problems:
     print("No changes detected in problems, exiting.")
@@ -102,12 +104,28 @@ with GITHUB_OUTPUT.open("a") as f:
 
 print(f"Writing merged YAML to: {YAML_FILE}")
 with YAML_FILE.open("w") as f:
-    yaml.dump(
-        {"problems": eureka_problems},
-        f,
-        default_flow_style=False,
-        sort_keys=False,
-        allow_unicode=True,
-    )
+    f.write("problems:\n")
+    for slug in sorted(eureka_problems.keys()):
+        problem = eureka_problems[slug]
+        f.write(f"  {slug}:\n")
+        f.write(f"    name: {problem['name']}\n")
+        f.write(f"    url: {problem['url']}\n")
+        f.write(f"    difficulty: {problem['difficulty']}\n")
+
+        categories = problem.get("categories", [])
+        if categories:
+            f.write(f"    categories: [{', '.join(categories)}]\n")
+
+        for lang in sorted(
+            [
+                k
+                for k in problem.keys()
+                if k not in ["name", "url", "difficulty", "categories"] and problem[k]
+            ]
+        ):
+            f.write(f"    {lang}:\n")
+            for approach in ["iterative", "recursive"]:
+                if approach in problem[lang]:
+                    f.write(f"      {approach}: {problem[lang][approach]}\n")
 
 print("Merge completed successfully.")
