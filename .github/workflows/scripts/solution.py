@@ -55,8 +55,10 @@ class Solution:
 
         # Strip illegal characters first (spaces survive), then convert spaces
         # to hyphens so multi-word names become valid URL path segments.
+        # First normalize " - " to " " to avoid triple dashes in titles like "Range Sum Query - Immutable"
+        normalized_name = self.problem_name.replace(" - ", " ")
         dashed_name = (
-            re.sub(ILLEGAL_SYMBOLS, "", self.problem_name).replace(" ", "-").lower()
+            re.sub(ILLEGAL_SYMBOLS, "", normalized_name).replace(" ", "-").lower()
         )
         commit_metadata = re.sub(QUOTATION_TEXT, "", commit).lower()
         emoji = (

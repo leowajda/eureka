@@ -500,11 +500,14 @@ problems:
     - Array
     - Prefix Sum
     iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/ProductOfArrayExceptSelf.java
-  range-sum-query---immutable:
+  range-sum-query-immutable:
     name: Range Sum Query - Immutable
-    url: https://leetcode.com/problems/range-sum-query---immutable
-    difficulty: ''
-    categories: []
+    url: https://leetcode.com/problems/range-sum-query-immutable
+    difficulty: Easy
+    categories:
+    - Array
+    - Design
+    - Prefix Sum
     iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/RangeSumQueryImmutable.java
   remove-duplicates-from-sorted-array:
     name: Remove Duplicates from Sorted Array
@@ -595,11 +598,14 @@ problems:
     - Array
     - Dynamic Programming
     iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/Triangle.java
-  two-sum-ii---input-array-is-sorted:
+  two-sum-ii-input-array-is-sorted:
     name: Two Sum II - Input Array Is Sorted
-    url: https://leetcode.com/problems/two-sum-ii---input-array-is-sorted
-    difficulty: ''
-    categories: []
+    url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted
+    difficulty: Medium
+    categories:
+    - Array
+    - Two Pointers
+    - Binary Search
     recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala
   two-sum:
     name: Two Sum
