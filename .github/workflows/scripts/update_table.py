@@ -2,7 +2,6 @@ import os
 from operator import attrgetter
 from pathlib import Path
 
-import pandas as pd
 import yaml
 
 from action import Action
@@ -28,9 +27,7 @@ REMOVED_FILES: list[str] = _env_filelist("removed_files")
 
 REPOSITORY: str = _require_env("repository")
 SERVER_URL: str = _require_env("server_url")
-README: Path = Path(_require_env("readme"))
 YAML_FILE: Path = Path(_require_env("yaml_file"))
-HEADER: Path = Path(_require_env("header"))
 GITHUB_OUTPUT: Path = Path(_require_env("GITHUB_OUTPUT"))
 
 
@@ -51,13 +48,15 @@ all_solutions: list[Solution] = sorted(
 
 
 def load_yaml() -> dict:
+    print(f"Loading YAML from: {YAML_FILE}")
     if not YAML_FILE.exists():
-        return {"problems": {}}
+        raise RuntimeError(f"Required YAML file '{YAML_FILE}' does not exist.")
     with open(YAML_FILE) as f:
         data = yaml.safe_load(f) or {}
         return data.get("problems", {})
 
 
+print(f"Loading existing problems from: {YAML_FILE}")
 original_problems: dict = load_yaml()
 modified_problems: dict = dict(original_problems)
 
@@ -83,6 +82,7 @@ for solution in all_solutions:
 
     elif solution.action in (Action.ADD, Action.UPDATE):
         if slug not in modified_problems:
+            print(f"adding new problem: {slug}")
             modified_problems[slug] = {
                 "name": solution.problem_name,
                 "url": solution.host_url.split("](")[1].rstrip(")"),
@@ -97,9 +97,10 @@ for solution in all_solutions:
 
 
 if modified_problems == original_problems:
+    print("No changes detected, exiting.")
     raise SystemExit(0)
 
-print(f"filtered solutions:\n{', '.join(str(s) for s in active_solutions)}")
+print(f"Changes detected: {len(active_solutions)} solutions updated")
 
 details: list[str] = [f"{s.problem_name}: {s.sha}" for s in active_solutions]
 noun: str = "change" if len(details) == 1 else "changes"
@@ -108,6 +109,7 @@ commit_msg: str = f"ci(docs): update table with latest {noun}\n" + "\n".join(det
 with GITHUB_OUTPUT.open("a") as f:
     print(f"commit_msg<<EOF\n{commit_msg}\nEOF", file=f)
 
+print(f"Writing updated YAML to: {YAML_FILE}")
 with YAML_FILE.open("w") as f:
     yaml.dump(
         {"problems": modified_problems},
@@ -117,38 +119,4 @@ with YAML_FILE.open("w") as f:
         allow_unicode=True,
     )
 
-all_langs: set[str] = set()
-for problem in modified_problems.values():
-    all_langs.update(
-        k
-        for k in problem.keys()
-        if k not in ["name", "url", "difficulty", "categories"]
-    )
-langs: list[str] = sorted(all_langs)
-
-table_data: list[dict] = []
-for slug in sorted(modified_problems.keys()):
-    problem = modified_problems[slug]
-    row: dict = {"Problem": f"[{problem.get('name', '')}]({problem.get('url', '')})"}
-    for lang in langs:
-        if lang in problem:
-            solutions: list[str] = []
-            for approach, url in problem[lang].items():
-                emoji: str = (
-                    "arrows_counterclockwise"
-                    if approach == "recursive"
-                    else "arrow_right_hook"
-                )
-                solutions.append(f"[:{emoji}:]({url})")
-            row[lang] = " ".join(solutions)
-        else:
-            row[lang] = ""
-    table_data.append(row)
-
-df: pd.DataFrame = pd.DataFrame(table_data)
-
-header_content: str = HEADER.read_text()
-with README.open("w") as f:
-    f.write(header_content)
-    f.write("\n\n## Problems\n\n")
-    f.write(df.to_markdown(index=False))
+print("Update completed successfully.")
