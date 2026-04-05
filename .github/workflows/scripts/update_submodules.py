@@ -12,18 +12,13 @@ def main() -> None:
     actor = require_env("actor")
     github_output = Path(require_env("GITHUB_OUTPUT"))
 
-    details: list[str] = []
-    for line in run_git("submodule", "status").splitlines():
-        if not line.startswith("+"):
-            continue
-
-        commit_sha, submodule = line.split(maxsplit=1)
-        if not submodule.startswith(SUBMODULE_PREFIX):
-            continue
-
-        details.append(
-            f"{server_url}/{actor}/{submodule}/commit/{commit_sha.lstrip('+')}"
-        )
+    details = [
+        f"{server_url}/{actor}/{submodule}/commit/{commit_sha.lstrip('+')}"
+        for line in run_git("submodule", "status").splitlines()
+        if line.startswith("+")
+        for commit_sha, submodule in [line.split(maxsplit=1)]
+        if submodule.startswith(SUBMODULE_PREFIX)
+    ]
 
     if not details:
         raise SystemExit(0)
