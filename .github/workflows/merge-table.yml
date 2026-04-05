@@ -31,9 +31,7 @@ jobs:
       - name: run script
         id: run_script
         env:
-          readme: README.md
           yaml_file: _data/problems.yml
-          header: _data/text.md
           actor: ${{ github.actor }}
           server_url: ${{ github.server_url }}
         run: python .github/workflows/scripts/merge_table.py
