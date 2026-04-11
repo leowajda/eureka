@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from pathlib import Path
 import os
+from pathlib import Path
 import subprocess
 from typing import Any
 
 import yaml
 
 ProblemMap = dict[str, dict[str, Any]]
+LanguageMap = dict[str, dict[str, str]]
 PROBLEM_FIELDS = ("name", "url", "difficulty", "categories")
 
 
@@ -49,18 +50,46 @@ def write_output(path: Path, name: str, value: str) -> None:
         handle.write(f"{name}<<EOF\n{value}\nEOF\n")
 
 
-def load_problems(path: Path) -> ProblemMap:
+def load_problem_table(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise RuntimeError(f"Required YAML file '{path}' does not exist.")
 
     with path.open(encoding="utf-8") as handle:
-        return (yaml.safe_load(handle) or {}).get("problems", {})
+        payload = yaml.safe_load(handle) or {}
+        return payload if isinstance(payload, dict) else {}
+
+
+def load_languages(path: Path) -> LanguageMap:
+    payload = load_problem_table(path)
+    languages = payload.get("languages", {})
+    return languages if isinstance(languages, dict) else {}
+
+
+def load_problems(path: Path) -> ProblemMap:
+    payload = load_problem_table(path)
+    problems = payload.get("problems", {})
+    return problems if isinstance(problems, dict) else {}
 
 
 def dump_problems(path: Path, problems: ProblemMap) -> None:
+    payload = load_problem_table(path)
+    languages = payload.get("languages")
+    dump_problem_table(
+        path, problems, languages if isinstance(languages, dict) else None
+    )
+
+
+def dump_problem_table(
+    path: Path, problems: ProblemMap, languages: LanguageMap | None = None
+) -> None:
+    payload: dict[str, Any] = {}
+    if languages:
+        payload["languages"] = languages
+    payload["problems"] = problems
+
     with path.open("w", encoding="utf-8") as handle:
         yaml.dump(
-            {"problems": problems},
+            payload,
             handle,
             Dumper=ProblemDumper,
             sort_keys=False,
@@ -104,6 +133,10 @@ def prune_problem(problem: dict[str, Any]) -> dict[str, Any] | None:
     }
     has_implementations = any(key not in PROBLEM_FIELDS for key in cleaned)
     return cleaned if has_implementations else None
+
+
+def prune_problem_entry(problem: dict[str, Any]) -> dict[str, Any] | None:
+    return prune_problem(problem)
 
 
 def iter_submodule_dirs(root: Path, prefix: str = "eureka-") -> list[Path]:
