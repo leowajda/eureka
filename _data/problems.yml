@@ -1,3 +1,16 @@
+languages:
+  cpp:
+    label: C++
+    code_language: cpp
+  java:
+    label: Java
+    code_language: java
+  python:
+    label: Python
+    code_language: python
+  scala:
+    label: Scala
+    code_language: scala
 problems:
   balanced-binary-tree:
     name: Balanced Binary Tree
