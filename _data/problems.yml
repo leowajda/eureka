@@ -20,7 +20,7 @@ problems:
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/BalancedBinaryTree.java
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/tree/recursive/BalancedBinaryTree.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/BalancedBinaryTree.scala
   binary-search:
     name: Binary Search
     url: https://leetcode.com/problems/binary-search
@@ -29,9 +29,11 @@ problems:
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/BinarySearch.java
     python:
-      iterative: https://github.com/leowajda/eureka-python/blob/master/src/array/iterative/BinarySearch.py
+      iterative: https://github.com/leowajda/eureka/blob/master/python/src/array/iterative/BinarySearch.py
+    cpp:
+      iterative: https://github.com/leowajda/eureka/blob/master/cpp/src/array/iterative/BinarySearch.cpp
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/BinarySearch.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/BinarySearch.scala
   binary-tree-level-order-traversal:
     name: Binary Tree Level Order Traversal
     url: https://leetcode.com/problems/binary-tree-level-order-traversal
@@ -89,13 +91,6 @@ problems:
     categories: [Array, Hash Table, Divide and Conquer, Tree, Binary Tree]
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/ConstructBinaryTreeFromPreorderAndInorderTraversal.java
-  container-with-most-water:
-    name: Container With Most Water
-    url: https://leetcode.com/problems/container-with-most-water
-    difficulty: Medium
-    categories: [Array, Two Pointers, Greedy]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/ContainerWithMostWater.scala
   course-schedule:
     name: Course Schedule
     url: https://leetcode.com/problems/course-schedule
@@ -124,13 +119,6 @@ problems:
     categories: [String, Dynamic Programming]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/string/iterative/EditDistance.java
-  find-all-anagrams-in-a-string:
-    name: Find All Anagrams in a String
-    url: https://leetcode.com/problems/find-all-anagrams-in-a-string
-    difficulty: Medium
-    categories: [Hash Table, String, Sliding Window]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/string/recursive/FindAllAnagramsInAString.scala
   find-first-and-last-position-of-element-in-sorted-array:
     name: Find First and Last Position of Element in Sorted Array
     url: https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array
@@ -237,7 +225,7 @@ problems:
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/string/recursive/LetterCombinationsOfAPhoneNumber.java
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/string/recursive/LetterCombinationsOfAPhoneNumber.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/LetterCombinationsOfAPhoneNumber.scala
   linked-list-cycle:
     name: Linked List Cycle
     url: https://leetcode.com/problems/linked-list-cycle
@@ -259,13 +247,6 @@ problems:
     categories: [Array, Binary Search, Dynamic Programming]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/LongestIncreasingSubsequence.java
-  longest-substring-without-repeating-characters:
-    name: Longest Substring Without Repeating Characters
-    url: https://leetcode.com/problems/longest-substring-without-repeating-characters
-    difficulty: Medium
-    categories: [Hash Table, String, Sliding Window]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/string/recursive/LongestSubstringWithoutRepeatingCharacters.scala
   lowest-common-ancestor-of-a-binary-search-tree:
     name: Lowest Common Ancestor of a Binary Search Tree
     url: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree
@@ -274,7 +255,7 @@ problems:
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/LowestCommonAncestorOfABinarySearchTree.java
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/tree/recursive/LowestCommonAncestorOfABinarySearchTree.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/LowestCommonAncestorOfABinarySearchTree.scala
   lowest-common-ancestor-of-a-binary-tree:
     name: Lowest Common Ancestor of a Binary Tree
     url: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree
@@ -297,7 +278,7 @@ problems:
     java:
       recursive: https://github.com/leowajda/eureka-java/blob/master/src/main/java/tree/recursive/MaximumDepthOfBinaryTree.java
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/tree/recursive/MaximumDepthOfBinaryTree.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/MaximumDepthOfBinaryTree.scala
   merge-k-sorted-lists:
     name: Merge k Sorted Lists
     url: https://leetcode.com/problems/merge-k-sorted-lists
@@ -313,7 +294,7 @@ problems:
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/linked_list/iterative/MiddleOfTheLinkedList.java
     scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/linked_list/recursive/MiddleOfTheLinkedList.scala
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/linked_list/recursive/MiddleOfTheLinkedList.scala
   minimum-consecutive-cards-to-pick-up:
     name: Minimum Consecutive Cards to Pick Up
     url: https://leetcode.com/problems/minimum-consecutive-cards-to-pick-up
@@ -342,13 +323,6 @@ problems:
     categories: [Hash Table, String, Sliding Window]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/MinimumWindowSubstring.java
-  move-zeroes:
-    name: Move Zeroes
-    url: https://leetcode.com/problems/move-zeroes
-    difficulty: Easy
-    categories: [Array, Two Pointers]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/MoveZeroes.scala
   number-of-islands:
     name: Number of Islands
     url: https://leetcode.com/problems/number-of-islands
@@ -412,13 +386,6 @@ problems:
     categories: [Array, Design, Prefix Sum]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/RangeSumQueryImmutable.java
-  remove-duplicates-from-sorted-array:
-    name: Remove Duplicates from Sorted Array
-    url: https://leetcode.com/problems/remove-duplicates-from-sorted-array
-    difficulty: Easy
-    categories: [Array, Two Pointers]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/RemoveDuplicatesFromSortedArray.scala
   reorganize-string:
     name: Reorganize String
     url: https://leetcode.com/problems/reorganize-string
@@ -482,13 +449,6 @@ problems:
     categories: [Array, Hash Table]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/TwoSum.java
-  two-sum-ii-input-array-is-sorted:
-    name: Two Sum II - Input Array Is Sorted
-    url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted
-    difficulty: Medium
-    categories: [Array, Two Pointers, Binary Search]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala
   ugly-number-ii:
     name: Ugly Number II
     url: https://leetcode.com/problems/ugly-number-ii
@@ -504,14 +464,7 @@ problems:
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/array/iterative/UniquePaths.java
     scala:
-      iterative: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/array/iterative/UniquePaths.scala
-  valid-palindrome:
-    name: Valid Palindrome
-    url: https://leetcode.com/problems/valid-palindrome
-    difficulty: Easy
-    categories: [Two Pointers, String]
-    scala:
-      recursive: https://github.com/leowajda/eureka-scala/blob/master/src/main/scala/string/recursive/ValidPalindrome.scala
+      iterative: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/iterative/UniquePaths.scala
   validate-binary-search-tree:
     name: Validate Binary Search Tree
     url: https://leetcode.com/problems/validate-binary-search-tree
@@ -533,3 +486,52 @@ problems:
     categories: [Hash Table, String, Breadth-First Search]
     java:
       iterative: https://github.com/leowajda/eureka-java/blob/master/src/main/java/graph/iterative/WordLadder.java
+  remove-duplicates-from-sorted-array:
+    name: Remove Duplicates from Sorted Array
+    url: https://leetcode.com/problems/remove-duplicates-from-sorted-array
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/RemoveDuplicatesFromSortedArray.scala
+  move-zeroes:
+    name: Move Zeroes
+    url: https://leetcode.com/problems/move-zeroes
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/MoveZeroes.scala
+  two-sum-ii-input-array-is-sorted:
+    name: Two Sum II - Input Array Is Sorted
+    url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala
+  valid-palindrome:
+    name: Valid Palindrome
+    url: https://leetcode.com/problems/valid-palindrome
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/ValidPalindrome.scala
+  container-with-most-water:
+    name: Container With Most Water
+    url: https://leetcode.com/problems/container-with-most-water
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/ContainerWithMostWater.scala
+  find-all-anagrams-in-a-string:
+    name: Find All Anagrams in a String
+    url: https://leetcode.com/problems/find-all-anagrams-in-a-string
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/FindAllAnagramsInAString.scala
+  longest-substring-without-repeating-characters:
+    name: Longest Substring Without Repeating Characters
+    url: https://leetcode.com/problems/longest-substring-without-repeating-characters
+    difficulty: ''
+    categories: []
+    scala:
+      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/LongestSubstringWithoutRepeatingCharacters.scala
