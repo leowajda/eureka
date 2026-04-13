@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 import re
 from typing import Self
 
 from action import Action
 from leetcode import fetch_problem_metadata
-from workflow_support import run_git
+from workflow_support import LanguageTarget, run_git
 
 QUOTED_TITLE = re.compile(r"'([^']+)'")
 ILLEGAL_SYMBOLS = re.compile(r"[^a-zA-Z0-9- ]")
+APPROACHES = {"iterative", "recursive"}
 
 
 @dataclass(frozen=True)
@@ -33,8 +35,7 @@ class Solution:
         file_path: str,
         action: Action,
         *,
-        repository: str,
-        server_url: str,
+        target: LanguageTarget,
         leetcode_session: str | None,
     ) -> Self | None:
         metadata = _load_commit_metadata(file_path)
@@ -52,10 +53,10 @@ class Solution:
             sha=sha,
             problem_name=problem_name,
             slug=slug,
-            source_url=f"{server_url}/{repository}/blob/master/{file_path}",
+            source_url=target.source_url(file_path),
             problem_url=f"https://{_problem_host(message)}/{slug}",
-            approach="recursive" if "recursive" in message.lower() else "iterative",
-            language=repository.rsplit("/", maxsplit=1)[-1].removeprefix("eureka-"),
+            approach=_extract_approach(file_path),
+            language=target.language,
             difficulty=difficulty,
             categories=tuple(categories),
         )
@@ -98,3 +99,10 @@ def _problem_host(message: str) -> str:
         if "leetcode" in message.lower()
         else "hackerrank.com/challenges"
     )
+
+
+def _extract_approach(file_path: str) -> str:
+    for segment in PurePosixPath(file_path).parts:
+        if segment in APPROACHES:
+            return segment
+    raise RuntimeError(f"Could not infer approach from file path: {file_path!r}")

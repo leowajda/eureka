@@ -16,6 +16,7 @@ post_package_bump_hooks = []
 [commit_types]
 solution = { changelog_title = "Solutions" }
 infra = { changelog_title = "", omit_from_changelog = true }
+merge = { changelog_title = "", omit_from_changelog = true }
 
 [changelog]
 path = "CHANGELOG.md"
