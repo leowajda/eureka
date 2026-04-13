@@ -32,7 +32,7 @@ jobs:
       - name: update table slices
         env:
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
-          SOURCE_URL_BASE: ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.ref_name }}
+          SOURCE_URL_BASE: ${{ github.server_url }}/${{ github.repository }}/blob/master
           EVENT_BEFORE: ${{ github.event.before }}
           EVENT_SHA: ${{ github.sha }}
         run: |
