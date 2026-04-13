@@ -25,7 +25,7 @@ jobs:
       - name: replay table slices
         env:
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
-          SOURCE_URL_BASE: ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.ref_name }}
+          SOURCE_URL_BASE: ${{ github.server_url }}/${{ github.repository }}/blob/master
         run: |
           set -euo pipefail
 
