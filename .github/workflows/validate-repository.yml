@@ -1,0 +1,85 @@
+name: validate-repository
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: lint automation
+        run: python -m ruff check automation tests
+
+      - name: run python tests
+        run: python -m pytest
+
+      - name: compile python source trees
+        run: python -m compileall automation python/src
+
+  build-cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+      - name: configure cpp build
+        run: cmake -S cpp -B cpp/build
+
+      - name: build cpp targets
+        run: cmake --build cpp/build
+
+  build-java:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: compile java sources
+        working-directory: java
+        run: ./gradlew --no-daemon compileJava
+
+  build-scala:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: sbt
+
+      - name: setup sbt
+        uses: sbt/setup-sbt@v1
+
+      - name: compile scala sources
+        working-directory: scala
+        run: sbt --batch compile

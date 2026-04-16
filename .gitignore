@@ -164,6 +164,8 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.venv/
+.ruff_cache/
 cover/
 
 # Translations

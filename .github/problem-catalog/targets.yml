@@ -1,0 +1,21 @@
+targets:
+  - language: java
+    label: Java
+    code_language: java
+    path_prefix: java
+    path_glob: java/src/main/**/*.java
+  - language: scala
+    label: Scala
+    code_language: scala
+    path_prefix: scala
+    path_glob: scala/src/main/**/*.scala
+  - language: python
+    label: Python
+    code_language: python
+    path_prefix: python
+    path_glob: python/src/**/*.py
+  - language: cpp
+    label: C++
+    code_language: cpp
+    path_prefix: cpp
+    path_glob: cpp/src/**/*.cpp
