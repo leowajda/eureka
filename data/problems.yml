@@ -639,6 +639,12 @@ problems:
     - language: java
       approach: iterative
       file_path: java/src/main/java/array/iterative/TwoSum.java
+    - language: python
+      approach: iterative
+      file_path: python/src/array/iterative/TwoSum.py
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/TwoSum.cpp
   two-sum-ii-input-array-is-sorted:
     name: Two Sum II - Input Array Is Sorted
     url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted
