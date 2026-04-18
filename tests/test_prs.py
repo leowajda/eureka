@@ -6,167 +6,134 @@ from pathlib import Path
 import pytest
 from automation.errors import AutomationError
 from automation.leetcode import PullRequestProblemMetadata, RelatedProblemMetadata
-from automation.models import LanguageTarget
 from automation.prs import (
-    GENERIC_PULL_REQUEST_TITLE,
+    PullRequestCommentPlan,
     PullRequestPlan,
-    PullRequestProblem,
-    PullRequestSolution,
-    build_pull_request_problems,
     collect_pull_request_labels,
     render_pull_request_body,
+    render_pull_request_comment,
     render_pull_request_title,
     resolve_base_branch_revision,
+    resolve_primary_action,
+    write_pull_request_comment_plan,
     write_pull_request_plan,
+)
+from automation.solution_branches import (
+    ACTION_ADD,
+    ACTION_REMOVE,
+    ACTION_UPDATE,
+    SolutionBranchChange,
 )
 
 
-def test_render_pull_request_title_for_single_problem() -> None:
+def test_render_pull_request_title() -> None:
     title = render_pull_request_title(
-        (
-            _problem(
-                slug="two-sum",
-                name="Two Sum",
-                frontend_id="1",
-                implementations=("python/iterative",),
-                language_labels=("Python",),
-                actions=("add",),
-            ),
-        ),
+        metadata=_metadata(),
+        action=ACTION_ADD,
         action_labels=_action_labels(),
     )
 
-    assert title == "Add Two Sum in Python"
-
-
-def test_render_pull_request_title_for_multiple_problems() -> None:
-    title = render_pull_request_title(
-        (
-            _problem(slug="two-sum", name="Two Sum", frontend_id="1"),
-            _problem(slug="binary-search", name="Binary Search", frontend_id="704"),
-        ),
-        action_labels=_action_labels(),
-    )
-
-    assert title == GENERIC_PULL_REQUEST_TITLE
+    assert title == "Add Two Sum"
 
 
 def test_render_pull_request_title_requires_action_label() -> None:
     with pytest.raises(AutomationError):
         render_pull_request_title(
-            (
-                _problem(
-                    slug="two-sum",
-                    name="Two Sum",
-                    frontend_id="1",
-                    actions=("add",),
-                ),
-            ),
+            metadata=_metadata(),
+            action=ACTION_ADD,
             action_labels={"update": "Update"},
         )
 
 
 def test_render_pull_request_body() -> None:
-    body = render_pull_request_body(
-        (
-            _problem(
-                slug="binary-search",
-                name="Binary Search",
-                frontend_id="704",
-                implementations=("java/iterative", "python/iterative"),
-                related=(
-                    RelatedProblemMetadata(
-                        slug="search-insert-position",
-                        frontend_id="35",
-                        name="Search Insert Position",
-                    ),
-                ),
+    body = render_pull_request_body(_metadata())
+
+    assert body.startswith("[Two Sum](https://leetcode.com/problems/two-sum)\n")
+    assert "Related:" in body
+    assert "[#167 Two Sum II - Input Array Is Sorted]" in body
+
+
+def test_render_pull_request_comment() -> None:
+    body = render_pull_request_comment(
+        metadata=_metadata(),
+        changes=(
+            SolutionBranchChange(
+                action=ACTION_ADD,
+                language="python",
+                approach="iterative",
+                file_path="python/src/array/iterative/two_sum.py",
             ),
-        )
+            SolutionBranchChange(
+                action=ACTION_UPDATE,
+                language="java",
+                approach="iterative",
+                file_path="java/src/main/java/array/iterative/TwoSum.java",
+            ),
+        ),
+        action_labels=_action_labels(),
     )
 
-    assert "[#704 Binary Search](https://leetcode.com/problems/binary-search)" in body
-    assert "`java/iterative`, `python/iterative`" in body
-    assert "Related:" in body
+    assert body.startswith("Updated [Two Sum](https://leetcode.com/problems/two-sum)\n")
+    assert "- Add `python/iterative`" in body
+    assert "- Update `java/iterative`" in body
 
 
 def test_collect_pull_request_labels() -> None:
-    labels = collect_pull_request_labels(
-        (
-            _problem(
-                slug="binary-search",
-                name="Binary Search",
-                frontend_id="704",
-                difficulty="Easy",
-                categories=("Array", "Binary Search"),
-            ),
-        )
-    )
+    labels = collect_pull_request_labels(_metadata())
 
     assert labels == (
         "difficulty:easy",
         "topic:array",
-        "topic:binary-search",
+        "topic:hash-table",
     )
 
 
-def test_build_pull_request_problems_groups_solutions() -> None:
-    targets = (
-        LanguageTarget(
-            language="java",
-            label="Java",
-            code_language="java",
-            path_prefix="java",
-            path_glob="java/src/main/**/*.java",
-        ),
-        LanguageTarget(
-            language="python",
-            label="Python",
-            code_language="python",
-            path_prefix="python",
-            path_glob="python/src/**/*.py",
-        ),
-    )
-    solutions = (
-        PullRequestSolution(
-            slug="binary-search",
-            action="add",
-            language="java",
-            language_label="Java",
-            approach="iterative",
-        ),
-        PullRequestSolution(
-            slug="binary-search",
-            action="add",
-            language="python",
-            language_label="Python",
-            approach="iterative",
-        ),
-    )
-    metadata_map = {
-        "binary-search": PullRequestProblemMetadata(
-            slug="binary-search",
-            frontend_id="704",
-            name="Binary Search",
-            difficulty="Easy",
-            categories=("Array", "Binary Search"),
+def test_resolve_primary_action_prefers_add() -> None:
+    action = resolve_primary_action(
+        (
+            SolutionBranchChange(
+                action=ACTION_ADD,
+                language="python",
+                approach="iterative",
+                file_path="python/src/array/iterative/two_sum.py",
+            ),
+            SolutionBranchChange(
+                action=ACTION_UPDATE,
+                language="java",
+                approach="iterative",
+                file_path="java/src/main/java/array/iterative/TwoSum.java",
+            ),
         )
-    }
-
-    problems = build_pull_request_problems(
-        targets=targets,
-        solutions=solutions,
-        metadata_map=metadata_map,
     )
 
-    assert problems[0].implementations == ("java/iterative", "python/iterative")
-    assert problems[0].language_labels == ("Java", "Python")
+    assert action == ACTION_ADD
+
+
+def test_resolve_primary_action_prefers_update_over_remove() -> None:
+    action = resolve_primary_action(
+        (
+            SolutionBranchChange(
+                action=ACTION_UPDATE,
+                language="python",
+                approach="iterative",
+                file_path="python/src/array/iterative/two_sum.py",
+            ),
+            SolutionBranchChange(
+                action=ACTION_REMOVE,
+                language="java",
+                approach="iterative",
+                file_path="java/src/main/java/array/iterative/TwoSum.java",
+            ),
+        )
+    )
+
+    assert action == ACTION_UPDATE
 
 
 def test_write_pull_request_plan(tmp_path: Path) -> None:
     plan = PullRequestPlan(
-        title="Add Two Sum in Python",
-        body="1. [#1 Two Sum](https://leetcode.com/problems/two-sum)\n",
+        title="Add Two Sum",
+        body="[Two Sum](https://leetcode.com/problems/two-sum)\n",
         labels=("difficulty:easy", "topic:array"),
         head_branch="solution/two-sum",
         base_branch="master",
@@ -179,6 +146,16 @@ def test_write_pull_request_plan(tmp_path: Path) -> None:
 
     assert payload["title"] == plan.title
     assert labels["labels"] == ["difficulty:easy", "topic:array"]
+
+
+def test_write_pull_request_comment_plan(tmp_path: Path) -> None:
+    plan = PullRequestCommentPlan(body="Updated [Two Sum](https://leetcode.com/problems/two-sum)\n")
+
+    write_pull_request_comment_plan(tmp_path, plan)
+
+    payload = json.loads((tmp_path / "comment.json").read_text(encoding="utf-8"))
+
+    assert payload == {"body": plan.body}
 
 
 def test_resolve_base_branch_revision_falls_back_to_origin(monkeypatch) -> None:
@@ -196,29 +173,20 @@ def test_resolve_base_branch_revision_falls_back_to_origin(monkeypatch) -> None:
     assert calls == ["master", "origin/master"]
 
 
-def _problem(
-    *,
-    slug: str,
-    name: str,
-    frontend_id: str,
-    implementations: tuple[str, ...] = ("python/iterative",),
-    difficulty: str = "Easy",
-    categories: tuple[str, ...] = ("Array",),
-    language_labels: tuple[str, ...] = ("Python",),
-    actions: tuple[str, ...] = ("add",),
-    related: tuple[RelatedProblemMetadata, ...] = (),
-) -> PullRequestProblem:
-    return PullRequestProblem(
-        slug=slug,
-        name=name,
-        frontend_id=frontend_id,
-        url=f"https://leetcode.com/problems/{slug}",
-        difficulty=difficulty,
-        categories=categories,
-        implementations=implementations,
-        language_labels=language_labels,
-        actions=actions,
-        related=related,
+def _metadata() -> PullRequestProblemMetadata:
+    return PullRequestProblemMetadata(
+        slug="two-sum",
+        frontend_id="1",
+        name="Two Sum",
+        difficulty="Easy",
+        categories=("Array", "Hash Table"),
+        related=(
+            RelatedProblemMetadata(
+                slug="two-sum-ii-input-array-is-sorted",
+                frontend_id="167",
+                name="Two Sum II - Input Array Is Sorted",
+            ),
+        ),
     )
 
 

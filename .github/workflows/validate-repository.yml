@@ -32,14 +32,17 @@ jobs:
             pull_request)
               echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
               echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+              echo "branch=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_OUTPUT"
               ;;
             push)
               echo "base=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
               echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+              echo "branch=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
               ;;
             merge_group)
               echo "base=${{ github.event.merge_group.base_sha }}" >> "$GITHUB_OUTPUT"
               echo "head=${{ github.event.merge_group.head_sha }}" >> "$GITHUB_OUTPUT"
+              echo "branch=" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported event '${{ github.event_name }}'." >&2
@@ -51,7 +54,8 @@ jobs:
         run: |
           python -m automation validate-commits \
             --base "${{ steps.range.outputs.base }}" \
-            --head "${{ steps.range.outputs.head }}"
+            --head "${{ steps.range.outputs.head }}" \
+            --branch-name "${{ steps.range.outputs.branch }}"
 
   validate-python:
     runs-on: ubuntu-latest

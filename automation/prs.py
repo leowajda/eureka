@@ -5,45 +5,23 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from automation.catalog import collect_solution_records_for_files
-from automation.commits import parse_solution_subject
 from automation.config import load_solution_action_labels, load_targets
 from automation.errors import AutomationError
-from automation.git import diff_files, latest_solution_subject, merge_base, run_git
+from automation.git import merge_base, resolve_base_revision, run_git
 from automation.labels import build_problem_label_names
 from automation.leetcode import (
     PullRequestProblemMetadata,
-    RelatedProblemMetadata,
     fetch_pull_request_metadata_map,
 )
-from automation.models import LanguageTarget
 from automation.paths import DEFAULT_SOLUTION_ACTION_LABELS_PATH, DEFAULT_TARGETS_PATH
-
-MAX_RELATED_PROBLEMS = 3
-GENERIC_PULL_REQUEST_TITLE = "Multiple LeetCode solutions"
-
-
-@dataclass(frozen=True)
-class PullRequestSolution:
-    slug: str
-    action: str
-    language: str
-    language_label: str
-    approach: str
-
-
-@dataclass(frozen=True)
-class PullRequestProblem:
-    slug: str
-    name: str
-    frontend_id: str
-    url: str
-    difficulty: str
-    categories: tuple[str, ...]
-    implementations: tuple[str, ...]
-    language_labels: tuple[str, ...]
-    actions: tuple[str, ...]
-    related: tuple[RelatedProblemMetadata, ...]
+from automation.solution_branches import (
+    ACTION_ADD,
+    ACTION_REMOVE,
+    ACTION_UPDATE,
+    SolutionBranchChange,
+    collect_solution_branch_changes,
+    parse_solution_branch_name,
+)
 
 
 @dataclass(frozen=True)
@@ -53,6 +31,11 @@ class PullRequestPlan:
     labels: tuple[str, ...]
     head_branch: str
     base_branch: str
+
+
+@dataclass(frozen=True)
+class PullRequestCommentPlan:
+    body: str
 
 
 def create_pull_request_plan(
@@ -67,26 +50,75 @@ def create_pull_request_plan(
 ) -> PullRequestPlan:
     targets = load_targets(targets_path)
     action_labels = load_solution_action_labels(action_labels_path)
-    solutions = collect_pull_request_solutions(
-        targets=targets,
-        base_branch=base_branch,
+    base_revision = merge_base(
+        base_revision=resolve_base_branch_revision(base_branch),
         head_revision=head_revision,
     )
-    metadata_map = metadata_loader(
-        {solution.slug for solution in solutions},
-        session_token,
-    )
-    problems = build_pull_request_problems(
+    changes = collect_solution_branch_changes(
         targets=targets,
-        solutions=solutions,
-        metadata_map=metadata_map,
+        branch_name=head_branch,
+        base_revision=base_revision,
+        head_revision=head_revision,
+    )
+    if not changes:
+        raise AutomationError(
+            f"No solution changes detected between '{base_branch}' and '{head_revision}'."
+        )
+
+    metadata = _load_pull_request_metadata(
+        slug=_branch_slug(head_branch),
+        session_token=session_token,
+        metadata_loader=metadata_loader,
     )
     return PullRequestPlan(
-        title=render_pull_request_title(problems, action_labels=action_labels),
-        body=render_pull_request_body(problems),
-        labels=collect_pull_request_labels(problems),
+        title=render_pull_request_title(
+            metadata=metadata,
+            action=resolve_primary_action(changes),
+            action_labels=action_labels,
+        ),
+        body=render_pull_request_body(metadata),
+        labels=collect_pull_request_labels(metadata),
         head_branch=head_branch,
         base_branch=base_branch,
+    )
+
+
+def create_pull_request_comment_plan(
+    *,
+    targets_path: Path,
+    action_labels_path: Path,
+    head_branch: str,
+    base_revision: str,
+    head_revision: str,
+    session_token: str | None,
+    metadata_loader=fetch_pull_request_metadata_map,
+) -> PullRequestCommentPlan | None:
+    targets = load_targets(targets_path)
+    action_labels = load_solution_action_labels(action_labels_path)
+    resolved_base_revision = resolve_base_revision(
+        base_revision=base_revision,
+        head_revision=head_revision,
+    )
+    changes = collect_solution_branch_changes(
+        targets=targets,
+        branch_name=head_branch,
+        base_revision=resolved_base_revision,
+        head_revision=head_revision,
+    )
+    if not changes:
+        return None
+
+    metadata = _load_pull_request_metadata(
+        slug=_branch_slug(head_branch),
+        session_token=session_token,
+        metadata_loader=metadata_loader,
+    )
+    return PullRequestCommentPlan(
+        body=render_pull_request_comment(
+            metadata=metadata,
+            changes=changes,
+            action_labels=action_labels,
+        )
     )
 
 
@@ -110,188 +142,83 @@ def write_pull_request_plan(output_dir: Path, plan: PullRequestPlan) -> None:
     )
 
 
-def collect_pull_request_solutions(
-    *,
-    targets: tuple[LanguageTarget, ...],
-    base_branch: str,
-    head_revision: str,
-) -> tuple[PullRequestSolution, ...]:
-    base_revision = merge_base(
-        base_revision=resolve_base_branch_revision(base_branch),
-        head_revision=head_revision,
-    )
-    solutions: list[PullRequestSolution] = []
-
-    for target in targets:
-        file_paths = (
-            *diff_files(
-                base_revision=base_revision,
-                head_revision=head_revision,
-                path_prefix=target.path_prefix,
-                diff_filter="A",
-            ),
-            *diff_files(
-                base_revision=base_revision,
-                head_revision=head_revision,
-                path_prefix=target.path_prefix,
-                diff_filter="M",
-            ),
-        )
-        for solution in collect_solution_records_for_files(
-            file_paths=file_paths,
-            target=target,
-        ):
-            subject = latest_solution_subject(solution.file_path)
-            if subject is None:
-                raise AutomationError(
-                    f"Could not resolve the latest solution commit subject for '{solution.file_path}'."
-                )
-            parsed = parse_solution_subject(subject)
-            solutions.append(
-                PullRequestSolution(
-                    slug=solution.slug,
-                    action=parsed.action,
-                    language=solution.language,
-                    language_label=target.label,
-                    approach=solution.approach,
-                )
-            )
-
-    if not solutions:
-        raise AutomationError(
-            f"No solution changes detected between '{base_branch}' and '{head_revision}'."
-        )
-
-    return tuple(
-        sorted(
-            solutions,
-            key=lambda solution: (solution.slug, solution.language, solution.approach),
-        )
-    )
-
-
-def build_pull_request_problems(
-    *,
-    targets: tuple[LanguageTarget, ...],
-    solutions: tuple[PullRequestSolution, ...],
-    metadata_map: dict[str, PullRequestProblemMetadata],
-) -> tuple[PullRequestProblem, ...]:
-    language_order = {target.language: index for index, target in enumerate(targets)}
-    grouped: dict[str, list[PullRequestSolution]] = {}
-    for solution in solutions:
-        grouped.setdefault(solution.slug, []).append(solution)
-
-    problems: list[PullRequestProblem] = []
-    for slug, grouped_solutions in grouped.items():
-        metadata = metadata_map.get(slug)
-        if metadata is None:
-            raise AutomationError(f"Missing pull request metadata for slug '{slug}'.")
-
-        implementations = tuple(
-            sorted(
-                {f"{solution.language}/{solution.approach}" for solution in grouped_solutions},
-                key=lambda implementation: (
-                    language_order.get(implementation.split("/", 1)[0], len(language_order)),
-                    implementation,
-                ),
-            )
-        )
-        language_labels = tuple(
-            sorted(
-                {solution.language_label for solution in grouped_solutions},
-                key=lambda label: next(
-                    (
-                        language_order[target.language]
-                        for target in targets
-                        if target.label == label
-                    ),
-                    len(language_order),
-                ),
-            )
-        )
-        actions = tuple(sorted({solution.action for solution in grouped_solutions}))
-        problems.append(
-            PullRequestProblem(
-                slug=slug,
-                name=metadata.name,
-                frontend_id=metadata.frontend_id,
-                url=metadata.url,
-                difficulty=metadata.difficulty,
-                categories=metadata.categories,
-                implementations=implementations,
-                language_labels=language_labels,
-                actions=actions,
-                related=metadata.related[:MAX_RELATED_PROBLEMS],
-            )
-        )
-
-    return tuple(
-        sorted(
-            problems,
-            key=lambda problem: (_frontend_id_sort_key(problem.frontend_id), problem.name),
-        )
+def write_pull_request_comment_plan(output_dir: Path, plan: PullRequestCommentPlan) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "comment.json").write_text(
+        json.dumps({"body": plan.body}, indent=2) + "\n",
+        encoding="utf-8",
     )
 
 
 def render_pull_request_title(
-    problems: tuple[PullRequestProblem, ...],
     *,
+    metadata: PullRequestProblemMetadata,
+    action: str,
     action_labels: Mapping[str, str],
 ) -> str:
-    if len(problems) != 1:
-        return GENERIC_PULL_REQUEST_TITLE
-
-    (problem,) = problems
-    if len(problem.actions) != 1:
-        return GENERIC_PULL_REQUEST_TITLE
-
-    action_name = problem.actions[0]
     try:
-        action = action_labels[action_name]
+        display_action = action_labels[action]
     except KeyError as error:
         raise AutomationError(
-            f"Missing pull request title label for solution action '{action_name}'."
+            f"Missing pull request title label for solution action '{action}'."
         ) from error
-
-    languages = ", ".join(problem.language_labels)
-    return f"{action} {problem.name} in {languages}"
+    return f"{display_action} {metadata.name}"
 
 
-def render_pull_request_body(problems: tuple[PullRequestProblem, ...]) -> str:
-    lines: list[str] = []
-
-    for index, problem in enumerate(problems, start=1):
-        lines.append(f"{index}. [#{problem.frontend_id} {problem.name}]({problem.url})")
-        lines.append(
-            "   " + ", ".join(f"`{implementation}`" for implementation in problem.implementations)
+def render_pull_request_body(metadata: PullRequestProblemMetadata) -> str:
+    lines = [f"[{metadata.name}]({metadata.url})"]
+    if metadata.related:
+        lines.extend(
+            [
+                "",
+                "Related:",
+                *(
+                    f"- [#{related.frontend_id} {related.name}]({related.url})"
+                    for related in metadata.related
+                ),
+            ]
         )
-        if problem.related:
-            lines.append("   Related:")
-            lines.extend(
-                f"   - [#{related.frontend_id} {related.name}]({related.url})"
-                for related in problem.related
-            )
-        lines.append("")
-
-    return "\n".join(lines).rstrip() + "\n"
+    return "\n".join(lines) + "\n"
 
 
-def collect_pull_request_labels(problems: tuple[PullRequestProblem, ...]) -> tuple[str, ...]:
-    labels = {
-        label
-        for problem in problems
-        for label in build_problem_label_names(
-            difficulty=problem.difficulty,
-            categories=problem.categories,
-        )
-    }
-    return tuple(sorted(labels))
+def render_pull_request_comment(
+    *,
+    metadata: PullRequestProblemMetadata,
+    changes: tuple[SolutionBranchChange, ...],
+    action_labels: Mapping[str, str],
+) -> str:
+    lines = [
+        f"Updated [{metadata.name}]({metadata.url})",
+        "",
+        "Changes in this push:",
+    ]
+    for change in changes:
+        try:
+            display_action = action_labels[change.action]
+        except KeyError as error:
+            raise AutomationError(
+                f"Missing pull request title label for solution action '{change.action}'."
+            ) from error
+        lines.append(f"- {display_action} `{change.implementation}`")
+    return "\n".join(lines) + "\n"
 
 
-def _frontend_id_sort_key(frontend_id: str) -> tuple[int, str]:
-    if frontend_id.isdigit():
-        return (int(frontend_id), frontend_id)
-    return (10**9, frontend_id)
+def collect_pull_request_labels(metadata: PullRequestProblemMetadata) -> tuple[str, ...]:
+    return build_problem_label_names(
+        difficulty=metadata.difficulty,
+        categories=metadata.categories,
+    )
+
+
+def resolve_primary_action(changes: tuple[SolutionBranchChange, ...]) -> str:
+    actions = {change.action for change in changes}
+    if actions == {ACTION_ADD}:
+        return ACTION_ADD
+    if ACTION_ADD in actions:
+        return ACTION_ADD
+    if ACTION_UPDATE in actions:
+        return ACTION_UPDATE
+    return ACTION_REMOVE
 
 
 def resolve_base_branch_revision(base_branch: str) -> str:
@@ -323,3 +250,44 @@ def create_and_write_pull_request_plan(
     )
     write_pull_request_plan(output_dir, plan)
     return plan
+
+
+def create_and_write_pull_request_comment_plan(
+    *,
+    targets_path: Path = DEFAULT_TARGETS_PATH,
+    action_labels_path: Path = DEFAULT_SOLUTION_ACTION_LABELS_PATH,
+    head_branch: str,
+    base_revision: str,
+    head_revision: str,
+    session_token: str | None,
+    output_dir: Path,
+) -> PullRequestCommentPlan | None:
+    plan = create_pull_request_comment_plan(
+        targets_path=targets_path,
+        action_labels_path=action_labels_path,
+        head_branch=head_branch,
+        base_revision=base_revision,
+        head_revision=head_revision,
+        session_token=session_token,
+    )
+    if plan is None:
+        return None
+    write_pull_request_comment_plan(output_dir, plan)
+    return plan
+
+
+def _branch_slug(head_branch: str) -> str:
+    return parse_solution_branch_name(head_branch)
+
+
+def _load_pull_request_metadata(
+    *,
+    slug: str,
+    session_token: str | None,
+    metadata_loader,
+) -> PullRequestProblemMetadata:
+    metadata_map = metadata_loader({slug}, session_token)
+    try:
+        return metadata_map[slug]
+    except KeyError as error:
+        raise AutomationError(f"Missing pull request metadata for slug '{slug}'.") from error

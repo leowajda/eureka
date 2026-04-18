@@ -29,7 +29,19 @@ jobs:
       - name: install python dependencies
         run: pip install -r requirements.txt
 
+      - name: find existing pull request
+        id: find-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          response="$(
+            gh api "repos/${GITHUB_REPOSITORY}/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${{ github.ref_name }}&base=master"
+          )"
+          pr_number="$(printf '%s\n' "$response" | jq -r '.[0].number // empty')"
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+
       - name: generate pull request payload
+        if: steps.find-pr.outputs.number == ''
         run: |
           python -m automation create-solution-pr \
             --base-branch "master" \
@@ -39,6 +51,7 @@ jobs:
             --output-dir .github/tmp/solution-pr
 
       - name: create pull request
+        if: steps.find-pr.outputs.number == ''
         id: create-pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,9 +62,40 @@ jobs:
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
       - name: apply pull request labels
+        if: steps.find-pr.outputs.number == ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh api repos/${GITHUB_REPOSITORY}/issues/${{ steps.create-pr.outputs.number }}/labels \
             --method POST \
             --input .github/tmp/solution-pr/labels.json
+
+      - name: require base revision for manual comment replay
+        if: steps.find-pr.outputs.number != '' && github.event_name != 'push'
+        run: |
+          echo "Existing solution PRs can only receive incremental comments from push events." >&2
+          exit 1
+
+      - name: generate pull request comment
+        if: steps.find-pr.outputs.number != '' && github.event_name == 'push'
+        run: |
+          python -m automation comment-solution-pr \
+            --head-branch "${{ github.ref_name }}" \
+            --base "${{ github.event.before }}" \
+            --head-revision "${{ github.sha }}" \
+            --session-token "${{ secrets.LEETCODE_SESSION }}" \
+            --output-dir .github/tmp/solution-pr
+
+      - name: post pull request comment
+        if: steps.find-pr.outputs.number != '' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f .github/tmp/solution-pr/comment.json ]; then
+            echo "No solution changes detected for this push."
+            exit 0
+          fi
+
+          gh api repos/${GITHUB_REPOSITORY}/issues/${{ steps.find-pr.outputs.number }}/comments \
+            --method POST \
+            --input .github/tmp/solution-pr/comment.json

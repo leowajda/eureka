@@ -13,6 +13,14 @@ def test_validate_commit_subject_accepts_remove_solution_commit() -> None:
     validate_commit_subject("solution(leetcode): remove iterative 'Binary Search'")
 
 
+def test_validate_commit_subject_rejects_wrong_solution_branch_slug() -> None:
+    with pytest.raises(AutomationError):
+        validate_commit_subject(
+            "solution(leetcode): add iterative 'Binary Search'",
+            expected_solution_slug="two-sum",
+        )
+
+
 def test_validate_commit_subject_accepts_conventional_commit() -> None:
     validate_commit_subject("ci(catalog): sync generated problem catalog")
 

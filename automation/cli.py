@@ -10,7 +10,10 @@ from automation.paths import (
     DEFAULT_SOLUTION_ACTION_LABELS_PATH,
     DEFAULT_TARGETS_PATH,
 )
-from automation.prs import create_and_write_pull_request_plan
+from automation.prs import (
+    create_and_write_pull_request_comment_plan,
+    create_and_write_pull_request_plan,
+)
 from automation.sync import replay_catalog, sync_catalog
 from automation.validation import validate_commit_range
 
@@ -120,6 +123,49 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory where the generated pull request payload files will be written.",
     )
 
+    create_pull_request_comment = subparsers.add_parser("comment-solution-pr")
+    create_pull_request_comment.add_argument(
+        "--head-branch",
+        required=True,
+        help="Head branch backing the existing pull request.",
+    )
+    create_pull_request_comment.add_argument(
+        "--base",
+        required=True,
+        help="Base revision used to determine the current push delta.",
+    )
+    create_pull_request_comment.add_argument(
+        "--head-revision",
+        default="HEAD",
+        help="Revision used to compute solution changes. Defaults to 'HEAD'.",
+    )
+    create_pull_request_comment.add_argument(
+        "--session-token",
+        default=None,
+        help="Optional LEETCODE_SESSION token used for authenticated LeetCode requests.",
+    )
+    create_pull_request_comment.add_argument(
+        "--targets-path",
+        type=Path,
+        default=DEFAULT_TARGETS_PATH,
+        help=f"Path to the targets configuration file. Defaults to '{DEFAULT_TARGETS_PATH}'.",
+    )
+    create_pull_request_comment.add_argument(
+        "--action-labels-path",
+        type=Path,
+        default=DEFAULT_SOLUTION_ACTION_LABELS_PATH,
+        help=(
+            "Path to the solution action label configuration file. "
+            f"Defaults to '{DEFAULT_SOLUTION_ACTION_LABELS_PATH}'."
+        ),
+    )
+    create_pull_request_comment.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Directory where the generated pull request comment payload will be written.",
+    )
+
     validate_commits = subparsers.add_parser("validate-commits")
     validate_commits.add_argument(
         "--base",
@@ -130,6 +176,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--head",
         required=True,
         help="Head revision used to determine which commit subjects should be validated.",
+    )
+    validate_commits.add_argument(
+        "--branch-name",
+        default=None,
+        help="Optional branch name used to validate solution/<slug> branch invariants.",
+    )
+    validate_commits.add_argument(
+        "--targets-path",
+        type=Path,
+        default=DEFAULT_TARGETS_PATH,
+        help=f"Path to the targets configuration file. Defaults to '{DEFAULT_TARGETS_PATH}'.",
     )
 
     return parser
@@ -146,6 +203,8 @@ def main(argv: list[str] | None = None) -> int:
             return _handle_replay(args)
         if args.command == "create-solution-pr":
             return _handle_create_solution_pr(args)
+        if args.command == "comment-solution-pr":
+            return _handle_comment_solution_pr(args)
         if args.command == "validate-commits":
             return _handle_validate_commits(args)
         raise AutomationError(f"Unsupported command: {args.command}")
@@ -193,10 +252,30 @@ def _handle_create_solution_pr(args: argparse.Namespace) -> int:
     return 0
 
 
+def _handle_comment_solution_pr(args: argparse.Namespace) -> int:
+    plan = create_and_write_pull_request_comment_plan(
+        targets_path=args.targets_path,
+        action_labels_path=args.action_labels_path,
+        head_branch=args.head_branch,
+        base_revision=args.base,
+        head_revision=args.head_revision,
+        session_token=args.session_token,
+        output_dir=args.output_dir,
+    )
+    if plan is None:
+        print("comment-solution-pr: no solution changes")
+        return 0
+
+    print(f"comment-solution-pr: wrote {args.output_dir}")
+    return 0
+
+
 def _handle_validate_commits(args: argparse.Namespace) -> int:
     validate_commit_range(
         base_revision=args.base,
         head_revision=args.head,
+        branch_name=args.branch_name,
+        targets_path=args.targets_path,
     )
     print("validate-commits: ok")
     return 0
