@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from automation.catalog import build_generated_catalog, collect_solution_records, load_generated_catalog
 from automation.config import load_targets
 from automation.models import ProblemMetadata
+from automation.paths import DEFAULT_CATALOG_PATH, DEFAULT_TARGETS_PATH
 
 
 def test_rebuild_matches_committed_generated_catalog() -> None:
-    current = load_generated_catalog(Path("_data/problems.yml"))
-    targets = load_targets(Path(".github/problem-catalog/targets.yml"))
+    current = load_generated_catalog(DEFAULT_CATALOG_PATH)
+    targets = load_targets(DEFAULT_TARGETS_PATH)
     solutions = collect_solution_records(
         targets=targets,
         source_url_base="https://github.com/leowajda/eureka/blob/master",

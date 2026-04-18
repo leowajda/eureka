@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from automation.errors import AutomationError
+from automation.paths import DEFAULT_CATALOG_PATH, DEFAULT_TARGETS_PATH
 from automation.sync import replay_catalog, sync_catalog
 
 
@@ -21,8 +22,8 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument(
         "--targets-path",
         type=Path,
-        required=True,
-        help="Path to the targets configuration file.",
+        default=DEFAULT_TARGETS_PATH,
+        help=f"Path to the targets configuration file. Defaults to '{DEFAULT_TARGETS_PATH}'.",
     )
     sync.add_argument(
         "--session-token",
@@ -32,8 +33,8 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument(
         "--catalog-path",
         type=Path,
-        required=True,
-        help="Path to the generated problem catalog artifact.",
+        default=DEFAULT_CATALOG_PATH,
+        help=f"Path to the generated problem catalog artifact. Defaults to '{DEFAULT_CATALOG_PATH}'.",
     )
     sync.add_argument(
         "--base",
@@ -55,8 +56,8 @@ def build_parser() -> argparse.ArgumentParser:
     replay.add_argument(
         "--targets-path",
         type=Path,
-        required=True,
-        help="Path to the targets configuration file.",
+        default=DEFAULT_TARGETS_PATH,
+        help=f"Path to the targets configuration file. Defaults to '{DEFAULT_TARGETS_PATH}'.",
     )
     replay.add_argument(
         "--session-token",
@@ -66,8 +67,8 @@ def build_parser() -> argparse.ArgumentParser:
     replay.add_argument(
         "--catalog-path",
         type=Path,
-        required=True,
-        help="Path to the generated problem catalog artifact.",
+        default=DEFAULT_CATALOG_PATH,
+        help=f"Path to the generated problem catalog artifact. Defaults to '{DEFAULT_CATALOG_PATH}'.",
     )
 
     return parser

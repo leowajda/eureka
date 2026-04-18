@@ -5,7 +5,7 @@
 - `java/`, `scala/`, `python/`, `cpp/`: solution trees + per-language build files.
 - `automation/`: Python CLI used by CI/CD.
 - `.github/problem-catalog/targets.yml`: language registry.
-- `_data/problems.yml`: generated problem catalog and cache.
+- `data/problems.yml`: generated problem catalog and cache.
 - `sync-problem-catalog.yml`: incremental update on `master`.
 - `replay-problem-catalog.yml`: manual full rebuild.
 - `validate-repository.yml`: lint, tests, compile/build checks.
