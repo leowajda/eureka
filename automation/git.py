@@ -56,12 +56,28 @@ def diff_files(
     return tuple(normalize_path(line) for line in output.splitlines() if line.strip())
 
 
+def merge_base(*, base_revision: str, head_revision: str) -> str:
+    return run_git("merge-base", base_revision, head_revision)
+
+
 def resolve_base_revision(*, base_revision: str | None, head_revision: str) -> str:
     if base_revision and base_revision != ZERO_SHA:
         return base_revision
     if _revision_exists(f"{head_revision}^"):
         return run_git("rev-parse", f"{head_revision}^")
     return run_git("hash-object", "-t", "tree", "/dev/null")
+
+
+def commit_subjects(*, base_revision: str, head_revision: str) -> tuple[str, ...]:
+    output = run_git(
+        "log",
+        "--format=%s",
+        "--no-merges",
+        f"{base_revision}..{head_revision}",
+    )
+    if not output:
+        return ()
+    return tuple(subject.strip() for subject in output.splitlines() if subject.strip())
 
 
 def latest_solution_subject(file_path: str) -> str | None:

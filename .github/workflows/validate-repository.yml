@@ -11,6 +11,48 @@ permissions:
   contents: read
 
 jobs:
+  validate-commit-messages:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: resolve commit range
+        id: range
+        run: |
+          case "${{ github.event_name }}" in
+            pull_request)
+              echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+              echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+              ;;
+            push)
+              echo "base=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+              echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+              ;;
+            merge_group)
+              echo "base=${{ github.event.merge_group.base_sha }}" >> "$GITHUB_OUTPUT"
+              echo "head=${{ github.event.merge_group.head_sha }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported event '${{ github.event_name }}'." >&2
+              exit 1
+              ;;
+          esac
+
+      - name: validate commit messages
+        run: |
+          python -m automation validate-commits \
+            --base "${{ steps.range.outputs.base }}" \
+            --head "${{ steps.range.outputs.head }}"
+
   validate-python:
     runs-on: ubuntu-latest
     steps:

@@ -8,6 +8,7 @@ from automation.errors import AutomationError
 def test_parse_solution_subject() -> None:
     parsed = parse_solution_subject("solution(leetcode): add iterative 'Binary Search'")
 
+    assert parsed.action == "add"
     assert parsed.approach == "iterative"
     assert parsed.slug == "binary-search"
 

@@ -8,7 +8,7 @@ from automation.utils import slugify_title
 
 SOLUTION_SUBJECT = re.compile(
     r"^solution\(leetcode\): "
-    r"(?:add|update) "
+    r"(?P<action>add|update) "
     r"(?P<approach>iterative|recursive) "
     r"'(?P<title>[^']+)'$"
 )
@@ -16,6 +16,7 @@ SOLUTION_SUBJECT = re.compile(
 
 @dataclass(frozen=True)
 class ParsedSolutionSubject:
+    action: str
     approach: str
     slug: str
 
@@ -29,6 +30,7 @@ def parse_solution_subject(subject: str) -> ParsedSolutionSubject:
         )
 
     return ParsedSolutionSubject(
+        action=match.group("action"),
         approach=match.group("approach"),
         slug=slugify_title(match.group("title")),
     )

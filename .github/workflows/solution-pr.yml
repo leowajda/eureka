@@ -1,0 +1,57 @@
+name: solution-pr
+
+on:
+  push:
+    branches:
+      - "solution/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-solution-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: generate pull request payload
+        run: |
+          python -m automation create-solution-pr \
+            --base-branch "master" \
+            --head-branch "${{ github.ref_name }}" \
+            --head-revision "${{ github.sha }}" \
+            --session-token "${{ secrets.LEETCODE_SESSION }}" \
+            --output-dir .github/tmp/solution-pr
+
+      - name: create pull request
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          response="$(gh api repos/${GITHUB_REPOSITORY}/pulls --method POST --input .github/tmp/solution-pr/pull_request.json)"
+          printf '%s\n' "$response" > .github/tmp/solution-pr/pull_request_response.json
+          pr_number="$(printf '%s\n' "$response" | jq -r '.number')"
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: apply pull request labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${GITHUB_REPOSITORY}/issues/${{ steps.create-pr.outputs.number }}/labels \
+            --method POST \
+            --input .github/tmp/solution-pr/labels.json
