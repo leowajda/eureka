@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
 from automation.catalog import collect_solution_records_for_files
 from automation.commits import parse_solution_subject
-from automation.config import load_targets
+from automation.config import load_solution_action_labels, load_targets
 from automation.errors import AutomationError
 from automation.git import diff_files, latest_solution_subject, merge_base, run_git
 from automation.labels import build_problem_label_names
@@ -16,9 +17,10 @@ from automation.leetcode import (
     fetch_pull_request_metadata_map,
 )
 from automation.models import LanguageTarget
-from automation.paths import DEFAULT_TARGETS_PATH
+from automation.paths import DEFAULT_SOLUTION_ACTION_LABELS_PATH, DEFAULT_TARGETS_PATH
 
 MAX_RELATED_PROBLEMS = 3
+GENERIC_PULL_REQUEST_TITLE = "Multiple LeetCode solutions"
 
 
 @dataclass(frozen=True)
@@ -56,6 +58,7 @@ class PullRequestPlan:
 def create_pull_request_plan(
     *,
     targets_path: Path,
+    action_labels_path: Path,
     base_branch: str,
     head_branch: str,
     head_revision: str,
@@ -63,6 +66,7 @@ def create_pull_request_plan(
     metadata_loader=fetch_pull_request_metadata_map,
 ) -> PullRequestPlan:
     targets = load_targets(targets_path)
+    action_labels = load_solution_action_labels(action_labels_path)
     solutions = collect_pull_request_solutions(
         targets=targets,
         base_branch=base_branch,
@@ -78,7 +82,7 @@ def create_pull_request_plan(
         metadata_map=metadata_map,
     )
     return PullRequestPlan(
-        title=render_pull_request_title(problems),
+        title=render_pull_request_title(problems, action_labels=action_labels),
         body=render_pull_request_body(problems),
         labels=collect_pull_request_labels(problems),
         head_branch=head_branch,
@@ -229,12 +233,26 @@ def build_pull_request_problems(
     )
 
 
-def render_pull_request_title(problems: tuple[PullRequestProblem, ...]) -> str:
+def render_pull_request_title(
+    problems: tuple[PullRequestProblem, ...],
+    *,
+    action_labels: Mapping[str, str],
+) -> str:
     if len(problems) != 1:
-        return "Multiple LeetCode solutions"
+        return GENERIC_PULL_REQUEST_TITLE
 
     (problem,) = problems
-    action = problem.actions[0] if len(problem.actions) == 1 else "change"
+    if len(problem.actions) != 1:
+        return GENERIC_PULL_REQUEST_TITLE
+
+    action_name = problem.actions[0]
+    try:
+        action = action_labels[action_name]
+    except KeyError as error:
+        raise AutomationError(
+            f"Missing pull request title label for solution action '{action_name}'."
+        ) from error
+
     languages = ", ".join(problem.language_labels)
     return f"{action} {problem.name} in {languages}"
 
@@ -288,6 +306,7 @@ def resolve_base_branch_revision(base_branch: str) -> str:
 def create_and_write_pull_request_plan(
     *,
     targets_path: Path = DEFAULT_TARGETS_PATH,
+    action_labels_path: Path = DEFAULT_SOLUTION_ACTION_LABELS_PATH,
     base_branch: str,
     head_branch: str,
     head_revision: str,
@@ -296,6 +315,7 @@ def create_and_write_pull_request_plan(
 ) -> PullRequestPlan:
     plan = create_pull_request_plan(
         targets_path=targets_path,
+        action_labels_path=action_labels_path,
         base_branch=base_branch,
         head_branch=head_branch,
         head_revision=head_revision,

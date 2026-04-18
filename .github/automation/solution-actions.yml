@@ -1,0 +1,7 @@
+actions:
+  - name: add
+    label: Add
+  - name: update
+    label: Update
+  - name: remove
+    label: Remove

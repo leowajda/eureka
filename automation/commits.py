@@ -8,7 +8,7 @@ from automation.utils import slugify_title
 
 SOLUTION_SUBJECT = re.compile(
     r"^solution\(leetcode\): "
-    r"(?P<action>add|update) "
+    r"(?P<action>add|update|remove) "
     r"(?P<approach>iterative|recursive) "
     r"'(?P<title>[^']+)'$"
 )
@@ -26,7 +26,7 @@ def parse_solution_subject(subject: str) -> ParsedSolutionSubject:
     if not match:
         raise AutomationError(
             "Solution commits must follow "
-            "\"solution(leetcode): <add|update> <iterative|recursive> 'Problem Title'\"."
+            "\"solution(leetcode): <add|update|remove> <iterative|recursive> 'Problem Title'\"."
         )
 
     return ParsedSolutionSubject(

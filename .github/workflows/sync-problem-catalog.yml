@@ -8,7 +8,7 @@ on:
       - "scala/**"
       - "python/**"
       - "cpp/**"
-      - ".github/problem-catalog/targets.yml"
+      - ".github/automation/targets.yml"
       - "automation/**"
       - "requirements.txt"
       - "pyproject.toml"

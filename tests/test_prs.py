@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from automation.errors import AutomationError
 from automation.leetcode import PullRequestProblemMetadata, RelatedProblemMetadata
 from automation.models import LanguageTarget
 from automation.prs import (
+    GENERIC_PULL_REQUEST_TITLE,
     PullRequestPlan,
     PullRequestProblem,
     PullRequestSolution,
@@ -30,10 +32,11 @@ def test_render_pull_request_title_for_single_problem() -> None:
                 language_labels=("Python",),
                 actions=("add",),
             ),
-        )
+        ),
+        action_labels=_action_labels(),
     )
 
-    assert title == "add Two Sum in Python"
+    assert title == "Add Two Sum in Python"
 
 
 def test_render_pull_request_title_for_multiple_problems() -> None:
@@ -41,10 +44,26 @@ def test_render_pull_request_title_for_multiple_problems() -> None:
         (
             _problem(slug="two-sum", name="Two Sum", frontend_id="1"),
             _problem(slug="binary-search", name="Binary Search", frontend_id="704"),
-        )
+        ),
+        action_labels=_action_labels(),
     )
 
-    assert title == "Multiple LeetCode solutions"
+    assert title == GENERIC_PULL_REQUEST_TITLE
+
+
+def test_render_pull_request_title_requires_action_label() -> None:
+    with pytest.raises(AutomationError):
+        render_pull_request_title(
+            (
+                _problem(
+                    slug="two-sum",
+                    name="Two Sum",
+                    frontend_id="1",
+                    actions=("add",),
+                ),
+            ),
+            action_labels={"update": "Update"},
+        )
 
 
 def test_render_pull_request_body() -> None:
@@ -146,7 +165,7 @@ def test_build_pull_request_problems_groups_solutions() -> None:
 
 def test_write_pull_request_plan(tmp_path: Path) -> None:
     plan = PullRequestPlan(
-        title="add Two Sum in Python",
+        title="Add Two Sum in Python",
         body="1. [#1 Two Sum](https://leetcode.com/problems/two-sum)\n",
         labels=("difficulty:easy", "topic:array"),
         head_branch="solution/two-sum",
@@ -201,3 +220,11 @@ def _problem(
         actions=actions,
         related=related,
     )
+
+
+def _action_labels() -> dict[str, str]:
+    return {
+        "add": "Add",
+        "update": "Update",
+        "remove": "Remove",
+    }

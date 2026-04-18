@@ -13,6 +13,14 @@ def test_parse_solution_subject() -> None:
     assert parsed.slug == "binary-search"
 
 
+def test_parse_solution_subject_supports_remove() -> None:
+    parsed = parse_solution_subject("solution(leetcode): remove recursive 'Binary Search'")
+
+    assert parsed.action == "remove"
+    assert parsed.approach == "recursive"
+    assert parsed.slug == "binary-search"
+
+
 def test_parse_solution_subject_rejects_invalid_format() -> None:
     with pytest.raises(AutomationError):
         parse_solution_subject("solution: Binary Search")

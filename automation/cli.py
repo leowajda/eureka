@@ -5,7 +5,11 @@ import sys
 from pathlib import Path
 
 from automation.errors import AutomationError
-from automation.paths import DEFAULT_CATALOG_PATH, DEFAULT_TARGETS_PATH
+from automation.paths import (
+    DEFAULT_CATALOG_PATH,
+    DEFAULT_SOLUTION_ACTION_LABELS_PATH,
+    DEFAULT_TARGETS_PATH,
+)
 from automation.prs import create_and_write_pull_request_plan
 from automation.sync import replay_catalog, sync_catalog
 from automation.validation import validate_commit_range
@@ -101,6 +105,15 @@ def build_parser() -> argparse.ArgumentParser:
         help=f"Path to the targets configuration file. Defaults to '{DEFAULT_TARGETS_PATH}'.",
     )
     create_pull_request.add_argument(
+        "--action-labels-path",
+        type=Path,
+        default=DEFAULT_SOLUTION_ACTION_LABELS_PATH,
+        help=(
+            "Path to the solution action label configuration file. "
+            f"Defaults to '{DEFAULT_SOLUTION_ACTION_LABELS_PATH}'."
+        ),
+    )
+    create_pull_request.add_argument(
         "--output-dir",
         type=Path,
         required=True,
@@ -168,6 +181,7 @@ def _handle_replay(args: argparse.Namespace) -> int:
 def _handle_create_solution_pr(args: argparse.Namespace) -> int:
     plan = create_and_write_pull_request_plan(
         targets_path=args.targets_path,
+        action_labels_path=args.action_labels_path,
         base_branch=args.base_branch,
         head_branch=args.head_branch,
         head_revision=args.head_revision,

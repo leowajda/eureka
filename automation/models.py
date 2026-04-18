@@ -297,6 +297,31 @@ class TargetsConfig(BaseModel):
         return self
 
 
+class SolutionActionLabel(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    name: str = Field(min_length=1)
+    label: str = Field(min_length=1)
+
+    @field_validator("name")
+    @classmethod
+    def normalize_name(cls, value: str) -> str:
+        return value.strip().lower()
+
+
+class SolutionActionLabelsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    actions: tuple[SolutionActionLabel, ...]
+
+    @model_validator(mode="after")
+    def validate_uniqueness(self) -> Self:
+        names = [action.name for action in self.actions]
+        if len(names) != len(set(names)):
+            raise ValueError("Duplicate action names detected in solution action labels.")
+        return self
+
+
 @dataclass(frozen=True)
 class SolutionCommit:
     file_path: str
