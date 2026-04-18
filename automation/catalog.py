@@ -37,7 +37,6 @@ def write_generated_catalog(path: Path, catalog: GeneratedCatalog) -> None:
 def collect_solution_records(
     *,
     targets: tuple[LanguageTarget, ...],
-    source_url_base: str,
 ) -> tuple[SolutionCommit, ...]:
     records: list[SolutionCommit] = []
 
@@ -46,7 +45,6 @@ def collect_solution_records(
             solution = _build_solution_record(
                 file_path=file_path,
                 target=target,
-                source_url_base=source_url_base,
             )
             if solution is not None:
                 records.append(solution)
@@ -63,14 +61,12 @@ def collect_solution_records_for_files(
     *,
     file_paths: tuple[str, ...],
     target: LanguageTarget,
-    source_url_base: str,
 ) -> tuple[SolutionCommit, ...]:
     records: list[SolutionCommit] = []
     for file_path in file_paths:
         solution = _build_solution_record(
             file_path=file_path,
             target=target,
-            source_url_base=source_url_base,
         )
         if solution is not None:
             records.append(solution)
@@ -86,6 +82,7 @@ def collect_solution_records_for_files(
 def build_generated_catalog(
     *,
     targets: tuple[LanguageTarget, ...],
+    source_url_base: str,
     metadata_catalog: dict[str, ProblemMetadata],
     solutions: tuple[SolutionCommit, ...],
 ) -> GeneratedCatalog:
@@ -104,13 +101,14 @@ def build_generated_catalog(
                 ProblemImplementation(
                     language=solution.language,
                     approach=solution.approach,
-                    source_url=solution.source_url,
+                    file_path=solution.file_path,
                 )
             )
         except ValueError as error:
             raise AutomationError(str(error)) from error
 
     return GeneratedCatalog(
+        source_url_base=source_url_base,
         languages=tuple(target.catalog_language() for target in targets),
         problems=tuple(problem for _, problem in sorted(problems.items(), key=lambda item: item[0])),
     )
@@ -120,7 +118,6 @@ def _build_solution_record(
     *,
     file_path: str,
     target: LanguageTarget,
-    source_url_base: str,
 ) -> SolutionCommit | None:
     if not target.matches(file_path) or not is_solution_candidate_path(file_path):
         return None
@@ -147,5 +144,4 @@ def _build_solution_record(
         language=target.language,
         approach=approach,
         slug=parsed.slug,
-        source_url=target.source_url(source_url_base, file_path),
     )

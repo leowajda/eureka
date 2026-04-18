@@ -8,7 +8,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from automation.utils import normalize_path
 
-CATALOG_METADATA_FIELDS = ("name", "url", "difficulty", "categories")
+CATALOG_VERSION = 2
+IMPLEMENTATION_FIELDS = ("language", "approach", "file_path")
+PROBLEM_METADATA_FIELDS = ("name", "url", "difficulty", "categories", "implementations")
 APPROACH_ORDER = {"iterative": 0, "recursive": 1}
 
 
@@ -37,15 +39,35 @@ class CatalogLanguage:
 class ProblemImplementation:
     language: str
     approach: str
-    source_url: str
+    file_path: str
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, object]) -> Self:
+        missing_fields = [field_name for field_name in IMPLEMENTATION_FIELDS if field_name not in payload]
+        if missing_fields:
+            missing = ", ".join(missing_fields)
+            raise ValueError(f"Implementation entry is missing required fields: {missing}.")
+
+        return cls(
+            language=str(payload["language"]),
+            approach=str(payload["approach"]),
+            file_path=normalize_path(str(payload["file_path"])),
+        )
+
+    def to_payload(self) -> dict[str, str]:
+        return {
+            "language": self.language,
+            "approach": self.approach,
+            "file_path": self.file_path,
+        }
 
     @property
     def key(self) -> tuple[str, str]:
         return (self.language, self.approach)
 
     @property
-    def sort_key(self) -> tuple[str, int, str]:
-        return (self.language, APPROACH_ORDER.get(self.approach, 99), self.approach)
+    def sort_key(self) -> tuple[str, int, str, str]:
+        return (self.language, APPROACH_ORDER.get(self.approach, 99), self.approach, self.file_path)
 
 
 @dataclass(frozen=True)
@@ -69,25 +91,22 @@ class CatalogProblem:
 
     @classmethod
     def from_payload(cls, slug: str, payload: Mapping[str, object]) -> Self:
-        missing_fields = [field_name for field_name in CATALOG_METADATA_FIELDS if field_name not in payload]
+        missing_fields = [field_name for field_name in PROBLEM_METADATA_FIELDS if field_name not in payload]
         if missing_fields:
             missing = ", ".join(missing_fields)
             raise ValueError(f"Problem '{slug}' is missing required fields: {missing}.")
 
-        implementations: list[ProblemImplementation] = []
-        for key, value in payload.items():
-            if key in CATALOG_METADATA_FIELDS:
-                continue
-            if not isinstance(value, Mapping):
-                raise TypeError(f"Problem '{slug}' language entry '{key}' must be a mapping of approaches.")
-            for approach, source_url in value.items():
-                implementations.append(
-                    ProblemImplementation(
-                        language=str(key),
-                        approach=str(approach),
-                        source_url=str(source_url),
-                    )
-                )
+        implementations_payload = payload["implementations"]
+        if not isinstance(implementations_payload, Iterable) or isinstance(
+            implementations_payload,
+            (str, bytes, Mapping),
+        ):
+            raise TypeError(f"Problem '{slug}' implementations must be a list of mappings.")
+
+        implementations = [
+            ProblemImplementation.from_payload(implementation)
+            for implementation in implementations_payload
+        ]
 
         return cls(
             slug=slug,
@@ -108,11 +127,11 @@ class CatalogProblem:
         implementation_map[implementation.key] = implementation
         return replace(self, implementations=_sort_implementations(implementation_map.values()))
 
-    def without_source_url(self, source_url: str) -> Self | None:
+    def without_file_path(self, file_path: str) -> Self | None:
         implementations = tuple(
             implementation
             for implementation in self.implementations
-            if implementation.source_url != source_url
+            if implementation.file_path != normalize_path(file_path)
         )
         if len(implementations) == len(self.implementations):
             return self
@@ -121,41 +140,53 @@ class CatalogProblem:
         return replace(self, implementations=implementations)
 
     def to_payload(self, *, language_order: tuple[str, ...]) -> dict[str, object]:
+        language_index = {language: index for index, language in enumerate(language_order)}
         payload: dict[str, object] = {
             "name": self.name,
             "url": self.url,
             "difficulty": self.difficulty,
             "categories": list(self.categories),
+            "implementations": [
+                implementation.to_payload()
+                for implementation in sorted(
+                    self.implementations,
+                    key=lambda implementation: (
+                        language_index.get(implementation.language, len(language_index)),
+                        APPROACH_ORDER.get(implementation.approach, 99),
+                        implementation.approach,
+                        implementation.file_path,
+                    ),
+                )
+            ],
         }
-
-        implementations_by_language: dict[str, dict[str, str]] = {}
-        for implementation in self.implementations:
-            implementations = implementations_by_language.setdefault(implementation.language, {})
-            implementations[implementation.approach] = implementation.source_url
-
-        for language in language_order:
-            implementations = implementations_by_language.get(language)
-            if implementations:
-                payload[language] = implementations
         return payload
 
 
 @dataclass(frozen=True)
 class GeneratedCatalog:
+    source_url_base: str
     languages: tuple[CatalogLanguage, ...]
     problems: tuple[CatalogProblem, ...]
 
     @classmethod
-    def empty(cls) -> Self:
-        return cls(languages=(), problems=())
+    def empty(cls, *, source_url_base: str = "") -> Self:
+        return cls(source_url_base=source_url_base, languages=(), problems=())
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, object]) -> Self:
+        version = payload.get("version")
         languages_payload = payload.get("languages", {})
         problems_payload = payload.get("problems", {})
+        source_url_base = payload.get("source_url_base")
 
+        if version != CATALOG_VERSION:
+            raise ValueError(f"Generated catalog version must be {CATALOG_VERSION}.")
+        if not isinstance(source_url_base, str):
+            raise TypeError("Generated catalog must contain a string 'source_url_base'.")
         if not isinstance(languages_payload, Mapping) or not isinstance(problems_payload, Mapping):
-            raise TypeError("Generated catalog must contain 'languages' and 'problems' mappings.")
+            raise TypeError(
+                "Generated catalog must contain 'languages' and 'problems' mappings."
+            )
 
         languages = tuple(
             CatalogLanguage.from_payload(language, value)
@@ -170,7 +201,11 @@ class GeneratedCatalog:
                 key=lambda problem: problem.slug,
             )
         )
-        return cls(languages=languages, problems=problems)
+        return cls(
+            source_url_base=source_url_base,
+            languages=languages,
+            problems=problems,
+        )
 
     @property
     def language_order(self) -> tuple[str, ...]:
@@ -178,6 +213,8 @@ class GeneratedCatalog:
 
     def to_payload(self) -> dict[str, object]:
         return {
+            "version": CATALOG_VERSION,
+            "source_url_base": self.source_url_base,
             "languages": {
                 language.name: language.to_payload()
                 for language in self.languages
@@ -208,9 +245,6 @@ class LanguageTarget(BaseModel):
 
         normalized = normalize_path(file_path)
         return normalized.startswith(f"{self.path_prefix}/") and fnmatchcase(normalized, self.path_glob)
-
-    def source_url(self, source_url_base: str, file_path: str) -> str:
-        return f"{source_url_base.rstrip('/')}/{normalize_path(file_path)}"
 
     def catalog_language(self) -> CatalogLanguage:
         return CatalogLanguage(
@@ -269,7 +303,6 @@ class SolutionCommit:
     language: str
     approach: str
     slug: str
-    source_url: str
 
 
 def _normalize_categories(value: object) -> tuple[str, ...]:

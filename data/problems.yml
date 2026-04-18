@@ -1,3 +1,5 @@
+version: 2
+source_url_base: https://github.com/leowajda/eureka/blob/master
 languages:
   java:
     label: Java
@@ -17,531 +19,689 @@ problems:
     url: https://leetcode.com/problems/balanced-binary-tree
     difficulty: Easy
     categories: [Tree, Depth-First Search, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/BalancedBinaryTree.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/BalancedBinaryTree.scala
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/BalancedBinaryTree.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/tree/recursive/BalancedBinaryTree.scala
   binary-search:
     name: Binary Search
     url: https://leetcode.com/problems/binary-search
     difficulty: Easy
     categories: [Array, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/BinarySearch.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/BinarySearch.scala
-    python:
-      iterative: https://github.com/leowajda/eureka/blob/master/python/src/array/iterative/BinarySearch.py
-    cpp:
-      iterative: https://github.com/leowajda/eureka/blob/master/cpp/src/array/iterative/BinarySearch.cpp
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/BinarySearch.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/array/recursive/BinarySearch.scala
+    - language: python
+      approach: iterative
+      file_path: python/src/array/iterative/BinarySearch.py
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/BinarySearch.cpp
   binary-tree-level-order-traversal:
     name: Binary Tree Level Order Traversal
     url: https://leetcode.com/problems/binary-tree-level-order-traversal
     difficulty: Medium
     categories: [Tree, Breadth-First Search, Binary Tree]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/iterative/BinaryTreeLevelOrderTraversal.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/tree/iterative/BinaryTreeLevelOrderTraversal.java
   binary-tree-right-side-view:
     name: Binary Tree Right Side View
     url: https://leetcode.com/problems/binary-tree-right-side-view
     difficulty: Medium
     categories: [Tree, Depth-First Search, Breadth-First Search, Binary Tree]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/iterative/BinaryTreeRightSideView.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/tree/iterative/BinaryTreeRightSideView.java
   binary-tree-zigzag-level-order-traversal:
     name: Binary Tree Zigzag Level Order Traversal
     url: https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal
     difficulty: Medium
     categories: [Tree, Breadth-First Search, Binary Tree]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/iterative/BinaryTreeZigzagLevelOrderTraversal.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/tree/iterative/BinaryTreeZigzagLevelOrderTraversal.java
   burst-balloons:
     name: Burst Balloons
     url: https://leetcode.com/problems/burst-balloons
     difficulty: Hard
     categories: [Array, Dynamic Programming]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/BurstBalloons.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/BurstBalloons.java
   coin-change:
     name: Coin Change
     url: https://leetcode.com/problems/coin-change
     difficulty: Medium
     categories: [Array, Dynamic Programming, Breadth-First Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/CoinChange.java
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/CoinChange.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/CoinChange.java
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/CoinChange.java
   coin-change-ii:
     name: Coin Change II
     url: https://leetcode.com/problems/coin-change-ii
     difficulty: Medium
     categories: [Array, Dynamic Programming]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/CoinChangeII.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/CoinChangeII.java
   combination-sum:
     name: Combination Sum
     url: https://leetcode.com/problems/combination-sum
     difficulty: Medium
     categories: [Array, Backtracking]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/CombinationSum.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/CombinationSum.java
   construct-binary-tree-from-preorder-and-inorder-traversal:
     name: Construct Binary Tree from Preorder and Inorder Traversal
     url: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal
     difficulty: Medium
     categories: [Array, Hash Table, Divide and Conquer, Tree, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/ConstructBinaryTreeFromPreorderAndInorderTraversal.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/ConstructBinaryTreeFromPreorderAndInorderTraversal.java
   container-with-most-water:
     name: Container With Most Water
     url: https://leetcode.com/problems/container-with-most-water
     difficulty: Medium
     categories: [Array, Two Pointers, Greedy]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/ContainerWithMostWater.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/array/recursive/ContainerWithMostWater.scala
   course-schedule:
     name: Course Schedule
     url: https://leetcode.com/problems/course-schedule
     difficulty: Medium
     categories: [Depth-First Search, Breadth-First Search, Graph Theory, Topological
         Sort]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/CourseSchedule.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/CourseSchedule.java
   decode-ways:
     name: Decode Ways
     url: https://leetcode.com/problems/decode-ways
     difficulty: Medium
     categories: [String, Dynamic Programming]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/DecodeWays.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/DecodeWays.java
   delete-operation-for-two-strings:
     name: Delete Operation for Two Strings
     url: https://leetcode.com/problems/delete-operation-for-two-strings
     difficulty: Medium
     categories: [String, Dynamic Programming]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/iterative/DeleteOperationForTwoStrings.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/string/iterative/DeleteOperationForTwoStrings.java
   edit-distance:
     name: Edit Distance
     url: https://leetcode.com/problems/edit-distance
     difficulty: Medium
     categories: [String, Dynamic Programming]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/iterative/EditDistance.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/string/iterative/EditDistance.java
   find-all-anagrams-in-a-string:
     name: Find All Anagrams in a String
     url: https://leetcode.com/problems/find-all-anagrams-in-a-string
     difficulty: Medium
     categories: [Hash Table, String, Sliding Window]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/FindAllAnagramsInAString.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/string/recursive/FindAllAnagramsInAString.scala
   find-first-and-last-position-of-element-in-sorted-array:
     name: Find First and Last Position of Element in Sorted Array
     url: https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array
     difficulty: Medium
     categories: [Array, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.java
-    cpp:
-      iterative: https://github.com/leowajda/eureka/blob/master/cpp/src/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.cpp
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.java
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/FindFirstAndLastPositionOfElementInSortedArray.cpp
   find-if-path-exists-in-graph:
     name: Find if Path Exists in Graph
     url: https://leetcode.com/problems/find-if-path-exists-in-graph
     difficulty: Easy
     categories: [Depth-First Search, Breadth-First Search, Union-Find, Graph Theory]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/FindIfPathExistsInGraph.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/FindIfPathExistsInGraph.java
   find-median-from-data-stream:
     name: Find Median from Data Stream
     url: https://leetcode.com/problems/find-median-from-data-stream
     difficulty: Hard
     categories: [Two Pointers, Design, Sorting, Heap (Priority Queue), Data Stream]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/custom/iterative/FindMedianFromDataStream.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/custom/iterative/FindMedianFromDataStream.java
   find-minimum-in-rotated-sorted-array:
     name: Find Minimum in Rotated Sorted Array
     url: https://leetcode.com/problems/find-minimum-in-rotated-sorted-array
     difficulty: Medium
     categories: [Array, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/FindMinimumInRotatedSortedArray.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/FindMinimumInRotatedSortedArray.java
   find-smallest-letter-greater-than-target:
     name: Find Smallest Letter Greater Than Target
     url: https://leetcode.com/problems/find-smallest-letter-greater-than-target
     difficulty: Easy
     categories: [Array, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/FindSmallestLetterGreaterThanTarget.java
-    cpp:
-      iterative: https://github.com/leowajda/eureka/blob/master/cpp/src/array/iterative/FindSmallestLetterGreaterThanTarget.cpp
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/FindSmallestLetterGreaterThanTarget.java
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/FindSmallestLetterGreaterThanTarget.cpp
   flood-fill:
     name: Flood Fill
     url: https://leetcode.com/problems/flood-fill
     difficulty: Easy
     categories: [Array, Depth-First Search, Breadth-First Search, Matrix]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/recursive/FloodFill.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/graph/recursive/FloodFill.java
   generate-parentheses:
     name: Generate Parentheses
     url: https://leetcode.com/problems/generate-parentheses
     difficulty: Medium
     categories: [String, Dynamic Programming, Backtracking]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/GenerateParentheses.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/GenerateParentheses.java
   get-the-maximum-score:
     name: Get the Maximum Score
     url: https://leetcode.com/problems/get-the-maximum-score
     difficulty: Hard
     categories: [Array, Two Pointers, Dynamic Programming, Greedy]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/GetTheMaximumScore.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/GetTheMaximumScore.java
   insert-into-a-binary-search-tree:
     name: Insert into a Binary Search Tree
     url: https://leetcode.com/problems/insert-into-a-binary-search-tree
     difficulty: Medium
     categories: [Tree, Binary Search Tree, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/InsertIntoABinarySearchTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/InsertIntoABinarySearchTree.java
   invert-binary-tree:
     name: Invert Binary Tree
     url: https://leetcode.com/problems/invert-binary-tree
     difficulty: Easy
     categories: [Tree, Depth-First Search, Breadth-First Search, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/InvertBinaryTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/InvertBinaryTree.java
   k-closest-points-to-origin:
     name: K Closest Points to Origin
     url: https://leetcode.com/problems/k-closest-points-to-origin
     difficulty: Medium
     categories: [Array, Math, Divide and Conquer, Geometry, Sorting, Heap (Priority
         Queue), Quickselect]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/KClosestPointsToOrigin.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/KClosestPointsToOrigin.java
   kth-largest-element-in-an-array:
     name: Kth Largest Element in an Array
     url: https://leetcode.com/problems/kth-largest-element-in-an-array
     difficulty: Medium
     categories: [Array, Divide and Conquer, Sorting, Heap (Priority Queue), Quickselect]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/KthLargestElementInAnArray.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/KthLargestElementInAnArray.java
   kth-smallest-element-in-a-sorted-matrix:
     name: Kth Smallest Element in a Sorted Matrix
     url: https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix
     difficulty: Medium
     categories: [Array, Binary Search, Sorting, Heap (Priority Queue), Matrix]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/KthSmallestElementInASortedMatrix.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/KthSmallestElementInASortedMatrix.java
   largest-divisible-subset:
     name: Largest Divisible Subset
     url: https://leetcode.com/problems/largest-divisible-subset
     difficulty: Medium
     categories: [Array, Math, Dynamic Programming, Sorting]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/LargestDivisibleSubset.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/LargestDivisibleSubset.java
   letter-combinations-of-a-phone-number:
     name: Letter Combinations of a Phone Number
     url: https://leetcode.com/problems/letter-combinations-of-a-phone-number
     difficulty: Medium
     categories: [Hash Table, String, Backtracking]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/LetterCombinationsOfAPhoneNumber.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/LetterCombinationsOfAPhoneNumber.scala
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/LetterCombinationsOfAPhoneNumber.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/string/recursive/LetterCombinationsOfAPhoneNumber.scala
   linked-list-cycle:
     name: Linked List Cycle
     url: https://leetcode.com/problems/linked-list-cycle
     difficulty: Easy
     categories: [Hash Table, Linked List, Two Pointers]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/linked_list/iterative/LinkedListCycle.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/linked_list/iterative/LinkedListCycle.java
   longest-common-subsequence:
     name: Longest Common Subsequence
     url: https://leetcode.com/problems/longest-common-subsequence
     difficulty: Medium
     categories: [String, Dynamic Programming]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/LongestCommonSubsequence.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/LongestCommonSubsequence.java
   longest-increasing-subsequence:
     name: Longest Increasing Subsequence
     url: https://leetcode.com/problems/longest-increasing-subsequence
     difficulty: Medium
     categories: [Array, Binary Search, Dynamic Programming]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/LongestIncreasingSubsequence.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/LongestIncreasingSubsequence.java
   longest-substring-without-repeating-characters:
     name: Longest Substring Without Repeating Characters
     url: https://leetcode.com/problems/longest-substring-without-repeating-characters
     difficulty: Medium
     categories: [Hash Table, String, Sliding Window]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/LongestSubstringWithoutRepeatingCharacters.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/string/recursive/LongestSubstringWithoutRepeatingCharacters.scala
   lowest-common-ancestor-of-a-binary-search-tree:
     name: Lowest Common Ancestor of a Binary Search Tree
     url: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree
     difficulty: Medium
     categories: [Tree, Depth-First Search, Binary Search Tree, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/LowestCommonAncestorOfABinarySearchTree.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/LowestCommonAncestorOfABinarySearchTree.scala
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/LowestCommonAncestorOfABinarySearchTree.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/tree/recursive/LowestCommonAncestorOfABinarySearchTree.scala
   lowest-common-ancestor-of-a-binary-tree:
     name: Lowest Common Ancestor of a Binary Tree
     url: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree
     difficulty: Medium
     categories: [Tree, Depth-First Search, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/LowestCommonAncestorOfABinaryTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/LowestCommonAncestorOfABinaryTree.java
   maximal-square:
     name: Maximal Square
     url: https://leetcode.com/problems/maximal-square
     difficulty: Medium
     categories: [Array, Dynamic Programming, Matrix]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/MaximalSquare.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/MaximalSquare.java
   maximum-depth-of-binary-tree:
     name: Maximum Depth of Binary Tree
     url: https://leetcode.com/problems/maximum-depth-of-binary-tree
     difficulty: Easy
     categories: [Tree, Depth-First Search, Breadth-First Search, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/MaximumDepthOfBinaryTree.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/tree/recursive/MaximumDepthOfBinaryTree.scala
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/MaximumDepthOfBinaryTree.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/tree/recursive/MaximumDepthOfBinaryTree.scala
   merge-k-sorted-lists:
     name: Merge k Sorted Lists
     url: https://leetcode.com/problems/merge-k-sorted-lists
     difficulty: Hard
     categories: [Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/linked_list/iterative/MergeKSortedLists.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/linked_list/iterative/MergeKSortedLists.java
   middle-of-the-linked-list:
     name: Middle of the Linked List
     url: https://leetcode.com/problems/middle-of-the-linked-list
     difficulty: Easy
     categories: [Linked List, Two Pointers]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/linked_list/iterative/MiddleOfTheLinkedList.java
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/linked_list/recursive/MiddleOfTheLinkedList.scala
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/linked_list/iterative/MiddleOfTheLinkedList.java
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/linked_list/recursive/MiddleOfTheLinkedList.scala
   minimum-consecutive-cards-to-pick-up:
     name: Minimum Consecutive Cards to Pick Up
     url: https://leetcode.com/problems/minimum-consecutive-cards-to-pick-up
     difficulty: Medium
     categories: [Array, Hash Table, Sliding Window]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/MinimumConsecutiveCardsToPickUp.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/MinimumConsecutiveCardsToPickUp.java
   minimum-depth-of-binary-tree:
     name: Minimum Depth of Binary Tree
     url: https://leetcode.com/problems/minimum-depth-of-binary-tree
     difficulty: Easy
     categories: [Tree, Depth-First Search, Breadth-First Search, Binary Tree]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/iterative/MinimumDepthOfBinaryTree.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/tree/iterative/MinimumDepthOfBinaryTree.java
   minimum-path-sum:
     name: Minimum Path Sum
     url: https://leetcode.com/problems/minimum-path-sum
     difficulty: Medium
     categories: [Array, Dynamic Programming, Matrix]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/MinimumPathSum.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/MinimumPathSum.java
   minimum-window-substring:
     name: Minimum Window Substring
     url: https://leetcode.com/problems/minimum-window-substring
     difficulty: Hard
     categories: [Hash Table, String, Sliding Window]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/MinimumWindowSubstring.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/MinimumWindowSubstring.java
   move-zeroes:
     name: Move Zeroes
     url: https://leetcode.com/problems/move-zeroes
     difficulty: Easy
     categories: [Array, Two Pointers]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/MoveZeroes.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/array/recursive/MoveZeroes.scala
   number-of-islands:
     name: Number of Islands
     url: https://leetcode.com/problems/number-of-islands
     difficulty: Medium
     categories: [Array, Depth-First Search, Breadth-First Search, Union-Find, Matrix]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/NumberOfIslands.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/NumberOfIslands.java
   open-the-lock:
     name: Open the Lock
     url: https://leetcode.com/problems/open-the-lock
     difficulty: Medium
     categories: [Array, Hash Table, String, Breadth-First Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/OpenTheLock.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/OpenTheLock.java
   palindrome-partitioning:
     name: Palindrome Partitioning
     url: https://leetcode.com/problems/palindrome-partitioning
     difficulty: Medium
     categories: [String, Dynamic Programming, Backtracking]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/PalindromePartitioning.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/PalindromePartitioning.java
   peak-index-in-a-mountain-array:
     name: Peak Index in a Mountain Array
     url: https://leetcode.com/problems/peak-index-in-a-mountain-array
     difficulty: Medium
     categories: [Array, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/PeakIndexInAMountainArray.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/PeakIndexInAMountainArray.java
   perfect-squares:
     name: Perfect Squares
     url: https://leetcode.com/problems/perfect-squares
     difficulty: Medium
     categories: [Math, Dynamic Programming, Breadth-First Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/math/iterative/PerfectSquares.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/math/iterative/PerfectSquares.java
   permutations:
     name: Permutations
     url: https://leetcode.com/problems/permutations
     difficulty: Medium
     categories: [Array, Backtracking]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/Permutations.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/Permutations.java
   predict-the-winner:
     name: Predict the Winner
     url: https://leetcode.com/problems/predict-the-winner
     difficulty: Medium
     categories: [Array, Math, Dynamic Programming, Recursion, Game Theory]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/PredictTheWinner.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/PredictTheWinner.java
   product-of-array-except-self:
     name: Product of Array Except Self
     url: https://leetcode.com/problems/product-of-array-except-self
     difficulty: Medium
     categories: [Array, Prefix Sum]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/ProductOfArrayExceptSelf.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/ProductOfArrayExceptSelf.java
   range-sum-query-immutable:
     name: Range Sum Query - Immutable
     url: https://leetcode.com/problems/range-sum-query-immutable
     difficulty: Easy
     categories: [Array, Design, Prefix Sum]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/RangeSumQueryImmutable.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/RangeSumQueryImmutable.java
   remove-duplicates-from-sorted-array:
     name: Remove Duplicates from Sorted Array
     url: https://leetcode.com/problems/remove-duplicates-from-sorted-array
     difficulty: Easy
     categories: [Array, Two Pointers]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/RemoveDuplicatesFromSortedArray.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/array/recursive/RemoveDuplicatesFromSortedArray.scala
   reorganize-string:
     name: Reorganize String
     url: https://leetcode.com/problems/reorganize-string
     difficulty: Medium
     categories: [Hash Table, String, Greedy, Sorting, Heap (Priority Queue), Counting]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/iterative/ReorganizeString.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/string/iterative/ReorganizeString.java
   serialize-and-deserialize-binary-tree:
     name: Serialize and Deserialize Binary Tree
     url: https://leetcode.com/problems/serialize-and-deserialize-binary-tree
     difficulty: Hard
     categories: [String, Tree, Depth-First Search, Breadth-First Search, Design, Binary
         Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/SerializeAndDeserializeBinaryTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/SerializeAndDeserializeBinaryTree.java
   sliding-puzzle:
     name: Sliding Puzzle
     url: https://leetcode.com/problems/sliding-puzzle
     difficulty: Hard
     categories: [Array, Dynamic Programming, Backtracking, Breadth-First Search, Memoization,
       Matrix]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/SlidingPuzzle.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/SlidingPuzzle.java
   sqrtx:
     name: Sqrt(x)
     url: https://leetcode.com/problems/sqrtx
     difficulty: Easy
     categories: [Math, Binary Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/math/iterative/SqrtX.java
-    cpp:
-      iterative: https://github.com/leowajda/eureka/blob/master/cpp/src/math/iterative/Sqrtx.cpp
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/math/iterative/SqrtX.java
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/math/iterative/Sqrtx.cpp
   subarray-sum-equals-k:
     name: Subarray Sum Equals K
     url: https://leetcode.com/problems/subarray-sum-equals-k
     difficulty: Medium
     categories: [Array, Hash Table, Prefix Sum]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/SubarraySumEqualsK.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/SubarraySumEqualsK.java
   subsets:
     name: Subsets
     url: https://leetcode.com/problems/subsets
     difficulty: Medium
     categories: [Array, Backtracking, Bit Manipulation]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/recursive/Subsets.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/array/recursive/Subsets.java
   subtree-of-another-tree:
     name: Subtree of Another Tree
     url: https://leetcode.com/problems/subtree-of-another-tree
     difficulty: Easy
     categories: [Tree, Depth-First Search, String Matching, Binary Tree, Hash Function]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/SubtreeOfAnotherTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/SubtreeOfAnotherTree.java
   triangle:
     name: Triangle
     url: https://leetcode.com/problems/triangle
     difficulty: Medium
     categories: [Array, Dynamic Programming]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/Triangle.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/Triangle.java
   two-sum:
     name: Two Sum
     url: https://leetcode.com/problems/two-sum
     difficulty: Easy
     categories: [Array, Hash Table]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/TwoSum.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/TwoSum.java
   two-sum-ii-input-array-is-sorted:
     name: Two Sum II - Input Array Is Sorted
     url: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted
     difficulty: Medium
     categories: [Array, Two Pointers, Binary Search]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/array/recursive/TwoSumInputArrayIsSorted.scala
   ugly-number-ii:
     name: Ugly Number II
     url: https://leetcode.com/problems/ugly-number-ii
     difficulty: Medium
     categories: [Hash Table, Math, Dynamic Programming, Heap (Priority Queue)]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/math/iterative/UglyNumberII.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/math/iterative/UglyNumberII.java
   unique-paths:
     name: Unique Paths
     url: https://leetcode.com/problems/unique-paths
     difficulty: Medium
     categories: [Math, Dynamic Programming, Combinatorics]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/array/iterative/UniquePaths.java
-    scala:
-      iterative: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/array/iterative/UniquePaths.scala
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/array/iterative/UniquePaths.java
+    - language: scala
+      approach: iterative
+      file_path: scala/src/main/scala/array/iterative/UniquePaths.scala
   valid-palindrome:
     name: Valid Palindrome
     url: https://leetcode.com/problems/valid-palindrome
     difficulty: Easy
     categories: [Two Pointers, String]
-    scala:
-      recursive: https://github.com/leowajda/eureka/blob/master/scala/src/main/scala/string/recursive/ValidPalindrome.scala
+    implementations:
+    - language: scala
+      approach: recursive
+      file_path: scala/src/main/scala/string/recursive/ValidPalindrome.scala
   validate-binary-search-tree:
     name: Validate Binary Search Tree
     url: https://leetcode.com/problems/validate-binary-search-tree
     difficulty: Medium
     categories: [Tree, Depth-First Search, Binary Search Tree, Binary Tree]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/tree/recursive/ValidateBinarySearchTree.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/tree/recursive/ValidateBinarySearchTree.java
   word-break:
     name: Word Break
     url: https://leetcode.com/problems/word-break
     difficulty: Medium
     categories: [Array, Hash Table, String, Dynamic Programming, Trie, Memoization]
-    java:
-      recursive: https://github.com/leowajda/eureka/blob/master/java/src/main/java/string/recursive/WordBreak.java
+    implementations:
+    - language: java
+      approach: recursive
+      file_path: java/src/main/java/string/recursive/WordBreak.java
   word-ladder:
     name: Word Ladder
     url: https://leetcode.com/problems/word-ladder
     difficulty: Hard
     categories: [Hash Table, String, Breadth-First Search]
-    java:
-      iterative: https://github.com/leowajda/eureka/blob/master/java/src/main/java/graph/iterative/WordLadder.java
+    implementations:
+    - language: java
+      approach: iterative
+      file_path: java/src/main/java/graph/iterative/WordLadder.java

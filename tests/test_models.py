@@ -7,6 +7,8 @@ from automation.models import CatalogProblem, GeneratedCatalog, ProblemImplement
 def test_generated_catalog_round_trips_through_payload() -> None:
     catalog = GeneratedCatalog.from_payload(
         {
+            "version": 2,
+            "source_url_base": "https://example.com/repo/blob/master",
             "languages": {
                 "python": {"label": "Python", "code_language": "python"},
             },
@@ -16,9 +18,13 @@ def test_generated_catalog_round_trips_through_payload() -> None:
                     "url": "https://leetcode.com/problems/binary-search",
                     "difficulty": "Easy",
                     "categories": ["Array", "Binary Search"],
-                    "python": {
-                        "iterative": "https://example.com/python/src/array/iterative/BinarySearch.py",
-                    },
+                    "implementations": [
+                        {
+                            "language": "python",
+                            "approach": "iterative",
+                            "file_path": "python/src/array/iterative/BinarySearch.py",
+                        },
+                    ],
                 }
             },
         }
@@ -39,7 +45,7 @@ def test_problem_rejects_duplicate_implementations() -> None:
     implementation = ProblemImplementation(
         language="python",
         approach="iterative",
-        source_url="https://example.com/python/src/array/iterative/BinarySearch.py",
+        file_path="python/src/array/iterative/BinarySearch.py",
     )
 
     with pytest.raises(ValueError):

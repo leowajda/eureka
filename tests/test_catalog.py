@@ -11,7 +11,6 @@ def test_rebuild_matches_committed_generated_catalog() -> None:
     targets = load_targets(DEFAULT_TARGETS_PATH)
     solutions = collect_solution_records(
         targets=targets,
-        source_url_base="https://github.com/leowajda/eureka/blob/master",
     )
     metadata_catalog = {
         problem.slug: ProblemMetadata(
@@ -24,6 +23,7 @@ def test_rebuild_matches_committed_generated_catalog() -> None:
     }
     rebuilt = build_generated_catalog(
         targets=targets,
+        source_url_base=current.source_url_base,
         metadata_catalog=metadata_catalog,
         solutions=solutions,
     )

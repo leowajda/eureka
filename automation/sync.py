@@ -51,7 +51,6 @@ def sync_catalog(
     current_catalog = load_generated_catalog_if_present(catalog_path)
     changes = collect_incremental_changes(
         targets=targets,
-        source_url_base=source_url_base,
         base_revision=resolve_base_revision(
             base_revision=base_revision,
             head_revision=head_revision,
@@ -61,6 +60,7 @@ def sync_catalog(
     generated_catalog = merge_incremental_catalog(
         current_catalog=current_catalog,
         targets=targets,
+        source_url_base=source_url_base,
         session_token=session_token,
         changes=changes,
     )
@@ -77,7 +77,6 @@ def replay_catalog(
     targets = load_targets(targets_path)
     solutions = collect_solution_records(
         targets=targets,
-        source_url_base=source_url_base,
     )
     metadata_catalog = fetch_problem_metadata_map(
         slugs={solution.slug for solution in solutions},
@@ -85,6 +84,7 @@ def replay_catalog(
     )
     generated_catalog = build_generated_catalog(
         targets=targets,
+        source_url_base=source_url_base,
         metadata_catalog=metadata_catalog,
         solutions=solutions,
     )
@@ -94,7 +94,6 @@ def replay_catalog(
 def collect_incremental_changes(
     *,
     targets: tuple[LanguageTarget, ...],
-    source_url_base: str,
     base_revision: str,
     head_revision: str,
 ) -> tuple[SolutionChange, ...]:
@@ -104,7 +103,6 @@ def collect_incremental_changes(
         changes.extend(
             _collect_changes_for_target(
                 target=target,
-                source_url_base=source_url_base,
                 base_revision=base_revision,
                 head_revision=head_revision,
             )
@@ -117,6 +115,7 @@ def merge_incremental_catalog(
     *,
     current_catalog: GeneratedCatalog,
     targets: tuple[LanguageTarget, ...],
+    source_url_base: str,
     session_token: str | None,
     changes: tuple[SolutionChange, ...],
     metadata_loader: Callable[[set[str], str | None], dict[str, ProblemMetadata]] = fetch_problem_metadata_map,
@@ -125,7 +124,7 @@ def merge_incremental_catalog(
 
     for change in changes:
         if change.action in {ChangeAction.REMOVE, ChangeAction.UPDATE}:
-            _remove_implementation(problems, change.solution.source_url)
+            _remove_implementation(problems, change.solution.file_path)
 
     metadata_catalog = {
         problem.slug: ProblemMetadata.from_problem(problem)
@@ -153,11 +152,12 @@ def merge_incremental_catalog(
             ProblemImplementation(
                 language=change.solution.language,
                 approach=change.solution.approach,
-                source_url=change.solution.source_url,
+                file_path=change.solution.file_path,
             )
         )
 
     return GeneratedCatalog(
+        source_url_base=source_url_base,
         languages=tuple(target.catalog_language() for target in targets),
         problems=tuple(problem for _, problem in sorted(problems.items(), key=lambda item: item[0])),
     )
@@ -166,7 +166,6 @@ def merge_incremental_catalog(
 def _collect_changes_for_target(
     *,
     target: LanguageTarget,
-    source_url_base: str,
     base_revision: str,
     head_revision: str,
 ) -> tuple[SolutionChange, ...]:
@@ -187,16 +186,15 @@ def _collect_changes_for_target(
             for solution in collect_solution_records_for_files(
                 file_paths=file_paths,
                 target=target,
-                source_url_base=source_url_base,
             )
         )
 
     return tuple(changes)
 
 
-def _remove_implementation(problems: dict[str, CatalogProblem], source_url: str) -> None:
+def _remove_implementation(problems: dict[str, CatalogProblem], file_path: str) -> None:
     for slug, problem in tuple(problems.items()):
-        updated = problem.without_source_url(source_url)
+        updated = problem.without_file_path(file_path)
         if updated is problem:
             continue
         if updated is None:

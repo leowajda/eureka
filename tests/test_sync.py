@@ -14,6 +14,7 @@ from automation.sync import ChangeAction, SolutionChange, merge_incremental_cata
 
 def test_incremental_merge_reuses_existing_metadata_without_fetch() -> None:
     current = GeneratedCatalog(
+        source_url_base="https://example.com/repo/blob/master",
         languages=(CatalogLanguage(name="java", label="Java", code_language="java"),),
         problems=(
             CatalogProblem(
@@ -26,7 +27,7 @@ def test_incremental_merge_reuses_existing_metadata_without_fetch() -> None:
                     ProblemImplementation(
                         language="java",
                         approach="iterative",
-                        source_url="https://example.com/java/BinarySearch.java",
+                        file_path="java/src/main/java/array/iterative/BinarySearch.java",
                     ),
                 ),
             ),
@@ -56,7 +57,6 @@ def test_incremental_merge_reuses_existing_metadata_without_fetch() -> None:
                 language="python",
                 approach="iterative",
                 slug="binary-search",
-                source_url="https://example.com/python/BinarySearch.py",
             ),
         ),
     )
@@ -64,6 +64,7 @@ def test_incremental_merge_reuses_existing_metadata_without_fetch() -> None:
     merged = merge_incremental_catalog(
         current_catalog=current,
         targets=targets,
+        source_url_base="https://example.com/repo/blob/master",
         session_token=None,
         changes=changes,
     )
@@ -76,6 +77,7 @@ def test_incremental_merge_reuses_existing_metadata_without_fetch() -> None:
 
 def test_incremental_merge_rehomes_changed_solution() -> None:
     current = GeneratedCatalog(
+        source_url_base="https://example.com/repo/blob/master",
         languages=(CatalogLanguage(name="python", label="Python", code_language="python"),),
         problems=(
             CatalogProblem(
@@ -88,7 +90,7 @@ def test_incremental_merge_rehomes_changed_solution() -> None:
                     ProblemImplementation(
                         language="python",
                         approach="iterative",
-                        source_url="https://example.com/python/Example.py",
+                        file_path="python/src/array/iterative/Example.py",
                     ),
                 ),
             ),
@@ -111,7 +113,6 @@ def test_incremental_merge_rehomes_changed_solution() -> None:
                 language="python",
                 approach="iterative",
                 slug="binary-search",
-                source_url="https://example.com/python/Example.py",
             ),
         ),
     )
@@ -119,6 +120,7 @@ def test_incremental_merge_rehomes_changed_solution() -> None:
     merged = merge_incremental_catalog(
         current_catalog=current,
         targets=targets,
+        source_url_base="https://example.com/repo/blob/master",
         session_token=None,
         changes=changes,
         metadata_loader=lambda slugs, session_token: {
@@ -133,11 +135,12 @@ def test_incremental_merge_rehomes_changed_solution() -> None:
 
     (problem,) = merged.problems
     assert problem.slug == "binary-search"
-    assert problem.implementations[0].source_url == "https://example.com/python/Example.py"
+    assert problem.implementations[0].file_path == "python/src/array/iterative/Example.py"
 
 
 def test_incremental_merge_fetches_only_missing_slugs() -> None:
     current = GeneratedCatalog(
+        source_url_base="https://example.com/repo/blob/master",
         languages=(CatalogLanguage(name="java", label="Java", code_language="java"),),
         problems=(
             CatalogProblem(
@@ -150,7 +153,7 @@ def test_incremental_merge_fetches_only_missing_slugs() -> None:
                     ProblemImplementation(
                         language="java",
                         approach="iterative",
-                        source_url="https://example.com/java/BinarySearch.java",
+                        file_path="java/src/main/java/array/iterative/BinarySearch.java",
                     ),
                 ),
             ),
@@ -180,7 +183,6 @@ def test_incremental_merge_fetches_only_missing_slugs() -> None:
                 language="python",
                 approach="iterative",
                 slug="binary-search",
-                source_url="https://example.com/python/BinarySearch.py",
             ),
         ),
         SolutionChange(
@@ -190,7 +192,6 @@ def test_incremental_merge_fetches_only_missing_slugs() -> None:
                 language="java",
                 approach="iterative",
                 slug="two-sum",
-                source_url="https://example.com/java/TwoSum.java",
             ),
         ),
     )
@@ -199,6 +200,7 @@ def test_incremental_merge_fetches_only_missing_slugs() -> None:
     merged = merge_incremental_catalog(
         current_catalog=current,
         targets=targets,
+        source_url_base="https://example.com/repo/blob/master",
         session_token=None,
         changes=changes,
         metadata_loader=lambda slugs, session_token: captured.append(set(slugs)) or {

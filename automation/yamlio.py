@@ -39,7 +39,8 @@ def _represent_mapping(dumper: CatalogDumper, data: dict[Any, Any]) -> yaml.Node
 
 
 def _represent_sequence(dumper: CatalogDumper, data: list[Any]) -> yaml.Node:
-    return dumper.represent_sequence("tag:yaml.org,2002:seq", data, flow_style=True)
+    flow_style = all(not isinstance(item, (dict, list, tuple)) for item in data)
+    return dumper.represent_sequence("tag:yaml.org,2002:seq", data, flow_style=flow_style)
 
 
 CatalogDumper.add_representer(dict, _represent_mapping)
