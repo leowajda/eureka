@@ -6,6 +6,9 @@ on:
       - "solution/**"
   workflow_dispatch:
 
+env:
+  SOLUTION_PR_ASSIGNEE: leowajda
+
 permissions:
   contents: read
   pull-requests: write
@@ -69,6 +72,15 @@ jobs:
           gh api repos/${GITHUB_REPOSITORY}/issues/${{ steps.create-pr.outputs.number }}/labels \
             --method POST \
             --input .github/tmp/solution-pr/labels.json
+
+      - name: assign pull request owner
+        if: steps.find-pr.outputs.number == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${GITHUB_REPOSITORY}/issues/${{ steps.create-pr.outputs.number }}/assignees \
+            --method POST \
+            -f "assignees[]=${SOLUTION_PR_ASSIGNEE}"
 
       - name: require base revision for manual comment replay
         if: steps.find-pr.outputs.number != '' && github.event_name != 'push'
