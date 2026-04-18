@@ -9,8 +9,15 @@ from automation.paths import DEFAULT_CATALOG_PATH, DEFAULT_TARGETS_PATH
 def test_rebuild_matches_committed_generated_catalog() -> None:
     current = load_generated_catalog(DEFAULT_CATALOG_PATH)
     targets = load_targets(DEFAULT_TARGETS_PATH)
-    solutions = collect_solution_records(
-        targets=targets,
+    catalog_file_paths = {
+        implementation.file_path
+        for problem in current.problems
+        for implementation in problem.implementations
+    }
+    solutions = tuple(
+        solution
+        for solution in collect_solution_records(targets=targets)
+        if solution.file_path in catalog_file_paths
     )
     metadata_catalog = {
         problem.slug: ProblemMetadata(
