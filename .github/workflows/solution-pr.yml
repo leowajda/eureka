@@ -76,8 +76,13 @@ jobs:
           echo "Existing solution PRs can only receive incremental comments from push events." >&2
           exit 1
 
+      - name: skip incremental comment on forced push
+        if: steps.find-pr.outputs.number != '' && github.event_name == 'push' && github.event.forced == true
+        run: |
+          echo "Skipping incremental PR comment for forced push."
+
       - name: generate pull request comment
-        if: steps.find-pr.outputs.number != '' && github.event_name == 'push'
+        if: steps.find-pr.outputs.number != '' && github.event_name == 'push' && github.event.forced != true
         run: |
           python -m automation comment-solution-pr \
             --head-branch "${{ github.ref_name }}" \
@@ -87,7 +92,7 @@ jobs:
             --output-dir .github/tmp/solution-pr
 
       - name: post pull request comment
-        if: steps.find-pr.outputs.number != '' && github.event_name == 'push'
+        if: steps.find-pr.outputs.number != '' && github.event_name == 'push' && github.event.forced != true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
