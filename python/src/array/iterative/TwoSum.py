@@ -1,15 +1,11 @@
-from typing import List
-
-
 class TwoSum:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        indices: dict[int, int] = {}
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        first_index_by_value: dict[int, int] = {}
 
         for index, value in enumerate(nums):
-            complement = target - value
-            if complement in indices:
-                return [indices[complement], index]
+            if (match_index := first_index_by_value.get(target - value)) is not None:
+                return [match_index, index]
 
-            indices[value] = index
+            first_index_by_value.setdefault(value, index)
 
-        return []
+        return [-1, -1]
