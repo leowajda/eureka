@@ -165,6 +165,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 .venv/
+.pydeps/
 .ruff_cache/
 cover/
 
