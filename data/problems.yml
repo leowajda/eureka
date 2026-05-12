@@ -213,6 +213,9 @@ problems:
     - language: java
       approach: iterative
       file_path: java/src/main/java/array/iterative/FindMinimumInRotatedSortedArray.java
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/FindMinimumInRotatedSortedArray.cpp
   find-smallest-letter-greater-than-target:
     name: Find Smallest Letter Greater Than Target
     url: https://leetcode.com/problems/find-smallest-letter-greater-than-target
