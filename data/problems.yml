@@ -502,6 +502,9 @@ problems:
     - language: java
       approach: iterative
       file_path: java/src/main/java/array/iterative/PeakIndexInAMountainArray.java
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/PeakIndexInAMountainArray.cpp
   perfect-squares:
     name: Perfect Squares
     url: https://leetcode.com/problems/perfect-squares
