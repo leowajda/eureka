@@ -216,6 +216,15 @@ problems:
     - language: cpp
       approach: iterative
       file_path: cpp/src/array/iterative/FindMinimumInRotatedSortedArray.cpp
+  find-minimum-time-to-finish-all-jobs:
+    name: Find Minimum Time to Finish All Jobs
+    url: https://leetcode.com/problems/find-minimum-time-to-finish-all-jobs
+    difficulty: Hard
+    categories: [Array, Dynamic Programming, Backtracking, Bit Manipulation, Bitmask]
+    implementations:
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/FindMinimumTimeToFinishAllJobs.cpp
   find-smallest-letter-greater-than-target:
     name: Find Smallest Letter Greater Than Target
     url: https://leetcode.com/problems/find-smallest-letter-greater-than-target
