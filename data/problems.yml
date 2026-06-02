@@ -568,6 +568,9 @@ problems:
     - language: scala
       approach: recursive
       file_path: scala/src/main/scala/array/recursive/RemoveDuplicatesFromSortedArray.scala
+    - language: cpp
+      approach: iterative
+      file_path: cpp/src/array/iterative/RemoveDuplicatesFromSortedArray.cpp
   reorganize-string:
     name: Reorganize String
     url: https://leetcode.com/problems/reorganize-string
